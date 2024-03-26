@@ -1,0 +1,7 @@
+# VSCode
+.vscode/
+build/
+
+# CLion
+.idea/
+cmake-build-*
