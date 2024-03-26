@@ -1,6 +1,6 @@
 #pragma once
 
-#include "edge.h"
+#include "edge.hpp"
 
 namespace xgraph::utils {
 

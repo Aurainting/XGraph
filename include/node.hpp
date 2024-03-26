@@ -19,8 +19,19 @@ protected:
   static std::size_t ID;
 
 private:
+  /*!
+   * @brief
+   *
+   */
   const std::size_t _id;
+
+  /*!
+   * @brief
+   *
+   */
   const std::string _name;
+
+  // You can add your own data here.
 };
 
 std::size_t MyNode::ID = 0;

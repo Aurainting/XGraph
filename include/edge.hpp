@@ -1,9 +1,8 @@
 #pragma once
 
-#include "node.h"
-#include "type_concepts.h"
+#include "node.hpp"
+#include "type_concepts.hpp"
 #include <memory>
-
 
 namespace xgraph {
 template <NodeType Node = MyNode> class MyEdge {
@@ -33,9 +32,25 @@ public:
   }
 
 private:
+  /*!
+   * @brief
+   *
+   */
   const std::weak_ptr<Node> _source;
+
+  /*!
+   * @brief
+   *
+   */
   const std::weak_ptr<Node> _target;
+
+  /*!
+   * @brief
+   *
+   */
   double _weight;
+
+  // You can add your own data here.
 };
 
 class MyMatrixEdge {};

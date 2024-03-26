@@ -1,7 +1,7 @@
 #pragma once
 
-#include "edge.h"
-#include "utils.h"
+#include "edge.hpp"
+#include "utils.hpp"
 
 #include <functional>
 #include <memory>

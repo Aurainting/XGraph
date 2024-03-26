@@ -1,5 +1,5 @@
-#include "include/node.h"
-#include "include/xgraph.h"
+#include "include/node.hpp"
+#include "include/xgraph.hpp"
 #include <iostream>
 
 int main() {
