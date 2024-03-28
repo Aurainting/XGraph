@@ -6,6 +6,7 @@
 #include <functional>
 #include <memory>
 #include <unordered_set>
+#include <vector>
 
 namespace xgraph {
 template <NodeType Node = MyNode, EdgeType Edge = MyEdge<Node>> class Graph {
@@ -25,6 +26,15 @@ public:
 
   void AddEdge(const std::shared_ptr<Node> &s, const std::shared_ptr<Node> &t) {
     _edges.insert(std::make_shared<Edge>(s, t));
+  }
+
+  std::vector<std::shared_ptr<Edge>>
+  ShortestPath(const std::shared_ptr<Node> &s, const std::shared_ptr<Node> &t) const {
+
+  }
+
+  bool HasPath(const std::shared_ptr<Node> &s, const std::shared_ptr<Node> &t) const {
+
   }
 
 private:
