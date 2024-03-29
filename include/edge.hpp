@@ -5,7 +5,8 @@
 #include <memory>
 
 namespace xgraph {
-template <NodeType Node = MyNode> class MyEdge {
+template <NodeType Node = MyNode>
+class MyEdge {
  public:
   MyEdge(const std::shared_ptr<Node> &source,
          const std::shared_ptr<Node> &target)
@@ -52,6 +53,4 @@ template <NodeType Node = MyNode> class MyEdge {
 
   // You can add your own data here.
 };
-
-class MyMatrixEdge {};
 } // namespace xgraph
