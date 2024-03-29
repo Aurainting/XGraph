@@ -6,7 +6,7 @@
 
 namespace xgraph {
 template <NodeType Node = MyNode> class MyEdge {
-public:
+ public:
   MyEdge(const std::shared_ptr<Node> &source,
          const std::shared_ptr<Node> &target)
       : _source(std::weak_ptr<Node>(source)),
@@ -31,7 +31,7 @@ public:
     return _source.lock() == other.Source() && _target.lock() == other.Target();
   }
 
-private:
+ private:
   /*!
    * @brief
    *

@@ -4,7 +4,7 @@
 
 namespace xgraph {
 class MyNode {
-public:
+ public:
   explicit MyNode(std::string name) : _id(ID++), _name(std::move(name)) {}
 
   ~MyNode() { ID--; }
@@ -15,10 +15,10 @@ public:
 
   bool operator==(const MyNode &other) const { return _id == other.Id(); }
 
-protected:
+ protected:
   static std::size_t ID;
 
-private:
+ private:
   /*!
    * @brief
    *

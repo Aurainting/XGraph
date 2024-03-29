@@ -42,14 +42,14 @@ class Graph {
 
  private:
   std::unordered_set<std::shared_ptr<Node>,
-                     std::function<std::size_t(const std::shared_ptr<Node> &)>,
-                     std::function<bool(const std::shared_ptr<Node> &,
-                                        const std::shared_ptr<Node> &)>>
+      std::function<std::size_t(const std::shared_ptr<Node> &)>,
+      std::function<bool(const std::shared_ptr<Node> &,
+                         const std::shared_ptr<Node> &)>>
       _nodes;
   std::unordered_set<std::shared_ptr<Edge>,
-                     std::function<std::size_t(const std::shared_ptr<Edge> &)>,
-                     std::function<bool(const std::shared_ptr<Edge> &,
-                                        const std::shared_ptr<Edge> &)>>
+      std::function<std::size_t(const std::shared_ptr<Edge> &)>,
+      std::function<bool(const std::shared_ptr<Edge> &,
+                         const std::shared_ptr<Edge> &)>>
       _edges;
 };
 
