@@ -2,6 +2,7 @@
 
 #include "edge.hpp"
 #include "utils.hpp"
+#include "xgraph_impl.hpp"
 
 #include <functional>
 #include <memory>
@@ -28,12 +29,17 @@ public:
     _edges.insert(std::make_shared<Edge>(s, t));
   }
 
+  bool HasPath(const std::shared_ptr<Node> &s, const std::shared_ptr<Node> &t) const {
+
+  }
+
   std::vector<std::shared_ptr<Edge>>
   ShortestPath(const std::shared_ptr<Node> &s, const std::shared_ptr<Node> &t) const {
 
   }
 
-  bool HasPath(const std::shared_ptr<Node> &s, const std::shared_ptr<Node> &t) const {
+  std::vector<std::shared_ptr<Node>>
+  BFS(const std::shared_ptr<Node>& s = nullptr) {
 
   }
 
