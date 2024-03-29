@@ -40,6 +40,8 @@ class Graph {
   std::vector<std::shared_ptr<Node>> BFS(
       const std::shared_ptr<Node> &s = nullptr) {}
 
+  std::vector<std::shared_ptr<Node>> DFS(const std::shared_ptr<Node> &s = nullptr) {}
+
  private:
   std::unordered_set<std::shared_ptr<Node>,
       std::function<std::size_t(const std::shared_ptr<Node> &)>,
