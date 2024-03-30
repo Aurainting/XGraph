@@ -8,22 +8,21 @@ int main() {
   auto g = new xgraph::Graph();
 
   // Add Nodes
-  xgraph::MyNode n_0{"0"};
-  xgraph::MyNode n_1{"1"};
-  xgraph::MyNode n_2{"2"};
-  xgraph::MyNode n_3{"3"};
-  xgraph::MyNode n_4{"4"};
+  const auto n_0 = std::make_shared<xgraph::MyNode>("0");
+  const auto n_1 = std::make_shared<xgraph::MyNode>("1");
+  const auto n_2 = std::make_shared<xgraph::MyNode>("2");
+  const auto n_3 = std::make_shared<xgraph::MyNode>("3");
+  const auto n_4 = std::make_shared<xgraph::MyNode>("4");
 
-  g->AddNode(std::make_shared<xgraph::MyNode>(n_0));
-  g->AddNode(std::make_shared<xgraph::MyNode>(n_1));
+  g->AddNode(n_0);
+  g->AddNode(n_1);
   g->AddNode(n_2);
   g->AddNode(n_3);
   g->AddNode(n_4);
 
   // Add Edges
   g->AddEdge(n_0, n_1);
-  g->AddEdge(std::make_shared<xgraph::MyNode>(n_0),
-            std::make_shared<xgraph::MyNode>(n_2));
+  g->AddEdge(n_0, n_2);
   g->AddEdge(n_0, n_3);
   g->AddEdge(n_0, n_4);
   g->AddEdge(n_4, n_0);

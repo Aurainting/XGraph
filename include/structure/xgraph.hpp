@@ -40,13 +40,7 @@ class DiGraph {
       , _node_map()
   {}
 
-  void AddNode(const Node &n) { AddNode(std::make_shared<Node>(n)); }
-
   void AddNode(const NodePtr &n) { _nodes.insert(n); }
-
-  virtual void AddEdge(const Node &s, const Node &t) {
-    AddEdge(std::make_shared<Node>(s), std::make_shared<Node>(t));
-  }
 
   virtual void AddEdge(const NodePtr &s, const NodePtr &t) {
     const auto e = std::make_shared<Edge>(s, t);
@@ -112,10 +106,6 @@ class Graph : public DiGraph<Node, Edge> {
       : DiGraph<Node, Edge>(utils::NodeHash<Node>, utils::NodeEqual<Node>,
                             utils::EdgeHash<Edge>, utils::EdgeEqual<Edge>)
   {}
-
-  void AddEdge(const Node& s, const Node& t) override {
-    AddEdge(std::make_shared<Node>(s), std::make_shared<Node>(t));
-  }
 
   void AddEdge(const NodePtr& s, const NodePtr& t) override {
     DiGraph<Node, Edge>::AddEdge(s, t);
