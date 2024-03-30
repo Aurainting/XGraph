@@ -9,7 +9,6 @@
 #include "node.hpp"
 #include "edge.hpp"
 #include "utils.hpp"
-#include "xgraph_impl.hpp"
 
 
 namespace xgraph {

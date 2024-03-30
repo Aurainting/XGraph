@@ -30,5 +30,7 @@ int main() {
 
   std::cout << g->EdgeSize() << std::endl;
 
+  delete g;
+
   std::cout << "hello, xgraph!" << std::endl;
 }
