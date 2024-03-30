@@ -1,8 +1,7 @@
 #include <iostream>
 
-#include "include/node.hpp"
-#include "include/xgraph.hpp"
-
+#include "include/structure/node.hpp"
+#include "include/structure/xgraph.hpp"
 
 int main() {
   xgraph::Graph g;
@@ -21,11 +20,11 @@ int main() {
   g.AddNode(n_4);
 
   // Add Edges
+  g.AddEdge(n_0, n_1);
   g.AddEdge(std::make_shared<xgraph::MyNode>(n_0),
-            std::make_shared<xgraph::MyNode>(n_1));
-  g.AddEdge(n_0, n_2);
+            std::make_shared<xgraph::MyNode>(n_2));
   g.AddEdge(n_0, n_3);
   g.AddEdge(n_0, n_4);
 
-  std::cout << "hello, world!" << std::endl;
+  std::cout << "hello, xgraph!" << std::endl;
 }
