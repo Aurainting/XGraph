@@ -16,7 +16,7 @@ bool NodeEqual(const std::shared_ptr<Node> &lhs,
 
 template <EdgeType Edge> std::size_t EdgeHash(const std::shared_ptr<Edge> &e) {
   const auto hasher = std::hash<std::size_t>{};
-  return hasher(e->Source()->Id()) ^ hasher(e->Target()->Id());
+  return hasher(e->Source()->Id()) << 2 ^ hasher(e->Target()->Id());
 }
 
 template <EdgeType Edge>

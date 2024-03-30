@@ -45,12 +45,30 @@ class DiGraph {
     _node_map[s->Id()][t->Id()] = std::weak_ptr<Edge>(e);
   }
 
-  auto NodeSize() const {
+  [[nodiscard]] std::size_t NodeSize() const {
     return _nodes.size();
   }
 
-  auto EdgeSize() const {
+  [[nodiscard]] std::size_t EdgeSize() const {
     return _edges.size();
+  }
+
+  std::size_t EdgeSize(const Node& n) const {
+    return InEdgeSize(n) + OutEdgeSize(n);
+  }
+
+  virtual std::size_t InEdgeSize(const Node& n) const {
+    std::size_t res {0};
+
+    for (const auto& i : _node_map) {
+      res += i.second.count(n.Id());
+    }
+
+    return res;
+  }
+
+  virtual std::size_t OutEdgeSize(const Node& n) const {
+    return _node_map[n.Id()].size();
   }
 
  private:
