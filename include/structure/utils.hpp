@@ -14,15 +14,31 @@ bool NodeEqual(const std::shared_ptr<Node> &lhs,
   return *lhs == *rhs;
 }
 
-template <EdgeType Edge> std::size_t EdgeHash(const std::shared_ptr<Edge> &e) {
+template <EdgeType Edge> std::size_t DiEdgeHash(const std::shared_ptr<Edge> &e) {
   const auto hasher = std::hash<std::size_t>{};
   return hasher(e->Source()->Id()) << 2 ^ hasher(e->Target()->Id());
 }
 
 template <EdgeType Edge>
+bool DiEdgeEqual(const std::shared_ptr<Edge> &lhs,
+                 const std::shared_ptr<Edge> &rhs) {
+  return *lhs == *rhs;
+}
+
+template <EdgeType Edge> std::size_t EdgeHash(const std::shared_ptr<Edge> &e) {
+  const auto hasher = std::hash<std::size_t>{};
+  return hasher(e->Source()->Id()) ^ hasher(e->Target()->Id());
+}
+
+template <EdgeType Edge>
+std::shared_ptr<Edge> SwapEdge(const std::shared_ptr<Edge> &e) {
+  return std::make_shared<Edge>(e->Target(), e->Source());
+}
+
+template <EdgeType Edge>
 bool EdgeEqual(const std::shared_ptr<Edge> &lhs,
                const std::shared_ptr<Edge> &rhs) {
-  return *lhs == *rhs;
+  return *lhs == *rhs || *(SwapEdge(lhs)) == *rhs;
 }
 
 } // namespace xgraph::utils
