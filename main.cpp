@@ -25,6 +25,7 @@ int main() {
             std::make_shared<xgraph::MyNode>(n_2));
   g.AddEdge(n_0, n_3);
   g.AddEdge(n_0, n_4);
+  g.AddEdge(n_3, n_4);
 
   std::cout << "hello, xgraph!" << std::endl;
 }

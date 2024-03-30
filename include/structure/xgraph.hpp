@@ -13,24 +13,22 @@
 
 
 namespace xgraph {
+/*!
+ * Directed Graph
+ * @tparam Node Node class that satisfy `NodeType` concept
+ * @tparam Edge Edge class that satisfy `EdgeType` concept
+ */
 template <NodeType Node = MyNode, EdgeType Edge = MyEdge<Node>>
-class Graph {
+class DiGraph {
   using NodePtr = std::shared_ptr<Node>;
-  using NodeWPtr = std::weak_ptr<Node>;
   using EdgePtr = std::shared_ptr<Edge>;
-  using EdgeWPtr = std::weak_ptr<Edge>;
-
-  using NodeAdj = std::unordered_map<
-      NodeWPtr,
-      EdgeWPtr,
-      std::function<std::size_t(const NodeWPtr&)>,
-      std::function<bool(const NodeWPtr&, const NodeWPtr&)>>;
+  using NodeAdj = std::unordered_map<std::size_t, std::weak_ptr<Edge>>;
 
  public:
-  Graph()
+  DiGraph()
       : _nodes(1, utils::NodeHash<Node>, utils::NodeEqual<Node>)
       , _edges(1, utils::EdgeHash<Edge>, utils::EdgeEqual<Edge>)
-      , _node_map(1, utils::NodeWHash<Node>, utils::NodeWEqual<Node>)
+      , _node_map()
   {}
 
   void AddNode(const Node &n) { AddNode(std::make_shared<Node>(n)); }
@@ -41,19 +39,18 @@ class Graph {
     AddEdge(std::make_shared<Node>(s), std::make_shared<Node>(t));
   }
 
-  void AddEdge(const std::shared_ptr<Node> &s, const std::shared_ptr<Node> &t) {
+  virtual void AddEdge(const std::shared_ptr<Node> &s, const std::shared_ptr<Node> &t) {
     const auto e = std::make_shared<Edge>(s, t);
-
     _edges.insert(e);
+    _node_map[s->Id()][t->Id()] = std::weak_ptr<Edge>(e);
+  }
 
-    if (_node_map.contains(NodeWPtr(s))) {
-      _node_map[NodeWPtr(s)][NodeWPtr(t)] = EdgeWPtr(e);
-    } else {
-      auto node_adj = NodeAdj(1, utils::NodeWHash<Node>, utils::NodeWEqual<Node>);
-      node_adj[NodeWPtr(t)] = EdgeWPtr(e);
-      _node_map[NodeWPtr(s)] = node_adj;
-    }
+  auto NodeSize() const {
+    return _nodes.size();
+  }
 
+  auto EdgeSize() const {
+    return _edges.size();
   }
 
  private:
@@ -69,13 +66,17 @@ class Graph {
       std::function<bool(const EdgePtr&, const EdgePtr&)>>
       _edges;
 
-  std::unordered_map<
-      NodeWPtr,
-      NodeAdj,
-      std::function<std::size_t(const NodeWPtr &)>,
-      std::function<bool(const NodeWPtr &,
-                         const NodeWPtr &)>>
-      _node_map;
+  std::unordered_map<std::size_t, NodeAdj> _node_map;
+};
+
+/*!
+ * Undirected Graph
+ * @tparam Node
+ * @tparam Edge
+ */
+template <NodeType Node = MyNode, EdgeType Edge = MyEdge<Node>>
+class Graph : public DiGraph<Node, Edge> {
+
 };
 
 }  // namespace xgraph

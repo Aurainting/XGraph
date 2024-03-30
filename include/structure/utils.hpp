@@ -8,20 +8,10 @@ template <NodeType Node> std::size_t NodeHash(const std::shared_ptr<Node> &n) {
   return std::hash<std::size_t>{}(n->Id());
 }
 
-template <NodeType Node> std::size_t NodeWHash(const std::weak_ptr<Node> &n) {
-  return NodeHash(n.lock());
-}
-
 template <NodeType Node>
 bool NodeEqual(const std::shared_ptr<Node> &lhs,
                const std::shared_ptr<Node> &rhs) {
   return *lhs == *rhs;
-}
-
-template <NodeType Node>
-bool NodeWEqual(const std::weak_ptr<Node> &lhs,
-               const std::weak_ptr<Node> &rhs) {
-  return NodeEqual(lhs.lock(), rhs.lock());
 }
 
 template <EdgeType Edge> std::size_t EdgeHash(const std::shared_ptr<Edge> &e) {
