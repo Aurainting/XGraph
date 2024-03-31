@@ -46,8 +46,10 @@ class DiGraph {
 
     if (const auto& i = _edges.find(e);
         i != _edges.end()) {
+      // exist before
       _node_map[s->Id()][t->Id()] = std::weak_ptr<Edge>(*i);
     } else {
+      // new element
       _edges.insert(e);
       _node_map[s->Id()][t->Id()] = std::weak_ptr<Edge>(e);
     }
