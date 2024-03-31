@@ -37,6 +37,11 @@ int main() {
         xgraph::utils::PrintNode(n);
       });
 
+  xgraph::algo::DFS<xgraph::MyNode, xgraph::MyEdge<xgraph::MyNode>>(
+      *g, n_0, [] (const std::shared_ptr<xgraph::MyNode>& n) {
+        xgraph::utils::PrintNode(n);
+      });
+
   delete g;
 
   std::cout << "hello, xgraph!" << std::endl;

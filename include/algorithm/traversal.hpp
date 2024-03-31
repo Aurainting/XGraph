@@ -1,6 +1,7 @@
 #pragma once
 
 #include <queue>
+#include <stack>
 #include <utility>
 
 #include "../structure/xgraph.hpp"
@@ -37,4 +38,35 @@ void BFS(const DiGraph<Node, Edge>& graph,
   }
 }
 
+template <NodeType Node, EdgeType Edge>
+void DFS(const DiGraph<Node, Edge>& graph,
+         const std::shared_ptr<Node>& start,
+         const std::function<void(const std::shared_ptr<Node>&)>& func = std::identity{}) {
+  std::stack<std::shared_ptr<Node>> s;
+  std::unordered_map<std::size_t, bool> visited;
+
+  for (const auto& i : graph.Neighbors(start)) {
+    s.push(i);
+    visited[i->Id()] = false;
+  }
+
+  while (!s.empty()) {
+    const auto n = s.top();
+    s.pop();
+
+    if (visited[n->Id()]) {
+      continue;
+    }
+
+    func(n);
+    visited[n->Id()] = true;
+
+    for (const auto& i : graph.Neighbors(n)) {
+      s.push(i);
+      visited.try_emplace(i->Id(), false);
+    }
+  }
+
 }
+
+} // namespace xgraph::algo
