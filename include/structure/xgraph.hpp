@@ -43,8 +43,14 @@ class DiGraph {
 
   virtual void AddEdge(const NodePtr &s, const NodePtr &t) {
     const auto e = std::make_shared<Edge>(s, t);
-    _edges.insert(e);
-    _node_map[s->Id()][t->Id()] = std::weak_ptr<Edge>(e);
+
+    if (const auto& i = _edges.find(e);
+        i != _edges.end()) {
+      _node_map[s->Id()][t->Id()] = std::weak_ptr<Edge>(*i);
+    } else {
+      _edges.insert(e);
+      _node_map[s->Id()][t->Id()] = std::weak_ptr<Edge>(e);
+    }
   }
 
   [[nodiscard]] std::size_t NodeSize() const {

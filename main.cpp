@@ -5,7 +5,7 @@
 #include "include/algorithm/traversal.hpp"
 
 int main() {
-  auto g = new xgraph::Graph();
+  auto g = new xgraph::DiGraph();
 
   // Add Nodes
   const auto n_0 = std::make_shared<xgraph::MyNode>("0");
