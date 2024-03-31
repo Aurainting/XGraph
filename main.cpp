@@ -2,9 +2,9 @@
 
 #include "include/structure/node.hpp"
 #include "include/structure/xgraph.hpp"
+#include "include/algorithm/traversal.hpp"
 
 int main() {
-  // xgraph::Graph g;
   auto g = new xgraph::Graph();
 
   // Add Nodes
@@ -29,6 +29,13 @@ int main() {
   g->AddEdge(n_3, n_4);
 
   std::cout << g->EdgeSize() << std::endl;
+
+  auto n0_neigh = g->Neighbors(n_0);
+
+  xgraph::algo::BFS<xgraph::MyNode, xgraph::MyEdge<xgraph::MyNode>>(
+      *g, n_0, [] (const std::shared_ptr<xgraph::MyNode>& n) {
+        xgraph::utils::PrintNode(n);
+      });
 
   delete g;
 

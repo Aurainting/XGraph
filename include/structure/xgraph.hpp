@@ -55,22 +55,44 @@ class DiGraph {
     return _edges.size();
   }
 
-  virtual std::size_t EdgeSize(const Node& n) const {
+  virtual std::size_t EdgeSize(const NodePtr& n) const {
     return InEdgeSize(n) + OutEdgeSize(n);
   }
 
-  std::size_t InEdgeSize(const Node& n) const {
+  std::size_t InEdgeSize(const NodePtr& n) const {
     std::size_t res {0};
 
     for (const auto& i : _node_map) {
-      res += i.second.count(n.Id());
+      res += i.second.count(n->Id());
     }
 
     return res;
   }
 
-  std::size_t OutEdgeSize(const Node& n) const {
-    return _node_map.at(n.Id()).size();
+  std::size_t OutEdgeSize(const NodePtr& n) const {
+    return _node_map.at(n->Id()).size();
+  }
+
+  auto Neighbors(const NodePtr& n) const {
+    decltype(_nodes) res (1, _nodes.hash_function(), _nodes.key_eq());
+
+    // Add child nodes
+    if (const auto& n_child = _node_map.find(n->Id());
+        n_child != _node_map.end()) {
+      for (const auto& i : n_child->second) {
+        res.insert(i.second.lock()->Target());
+      }
+    }
+
+    // Add parent nodes
+    for (const auto& i : _node_map) {
+      if (const auto& n_parent = i.second.find(n->Id());
+          n_parent != i.second.end()) {
+        res.insert(n_parent->second.lock()->Source());
+      }
+    }
+
+    return res;
   }
 
  private:
@@ -115,7 +137,7 @@ class Graph : public DiGraph<Node, Edge> {
     return DiGraph<Node, Edge>::EdgeSize();
   }
 
-  size_t EdgeSize(const Node& n) const override {
+  size_t EdgeSize(const NodePtr& n) const override {
     return DiGraph<Node, Edge>::OutEdgeSize(n);
   }
 };
