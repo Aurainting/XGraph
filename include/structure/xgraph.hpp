@@ -2,14 +2,13 @@
 
 #include <functional>
 #include <memory>
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
-#include "node.hpp"
 #include "edge.hpp"
+#include "node.hpp"
 #include "utils.hpp"
-
 
 namespace xgraph {
 /*!
@@ -25,27 +24,24 @@ class DiGraph {
 
  public:
   DiGraph()
-      : _nodes(1, utils::NodeHash<Node>, utils::NodeEqual<Node>)
-      , _edges(1, utils::DiEdgeHash<Edge>, utils::DiEdgeEqual<Edge>)
-      , _node_map()
-  {}
+      : _nodes(1, utils::NodeHash<Node>, utils::NodeEqual<Node>),
+        _edges(1, utils::DiEdgeHash<Edge>, utils::DiEdgeEqual<Edge>),
+        _node_map() {}
 
   DiGraph(const std::function<std::size_t(const NodePtr&)>& node_hash,
           const std::function<bool(const NodePtr&, const NodePtr&)>& node_equal,
           const std::function<std::size_t(const EdgePtr&)>& edge_hash,
           const std::function<bool(const EdgePtr&, const EdgePtr&)>& edge_equal)
-      : _nodes(1, node_hash, node_equal)
-      , _edges(1, edge_hash, edge_equal)
-      , _node_map()
-  {}
+      : _nodes(1, node_hash, node_equal),
+        _edges(1, edge_hash, edge_equal),
+        _node_map() {}
 
-  void AddNode(const NodePtr &n) { _nodes.insert(n); }
+  void AddNode(const NodePtr& n) { _nodes.insert(n); }
 
-  virtual void AddEdge(const NodePtr &s, const NodePtr &t) {
+  virtual void AddEdge(const NodePtr& s, const NodePtr& t) {
     const auto e = std::make_shared<Edge>(s, t);
 
-    if (const auto& i = _edges.find(e);
-        i != _edges.end()) {
+    if (const auto& i = _edges.find(e); i != _edges.end()) {
       // exist before
       _node_map[s->Id()][t->Id()] = std::weak_ptr<Edge>(*i);
     } else {
@@ -55,20 +51,16 @@ class DiGraph {
     }
   }
 
-  [[nodiscard]] std::size_t NodeSize() const {
-    return _nodes.size();
-  }
+  [[nodiscard]] std::size_t NodeSize() const { return _nodes.size(); }
 
-  [[nodiscard]] virtual std::size_t EdgeSize() const {
-    return _edges.size();
-  }
+  [[nodiscard]] virtual std::size_t EdgeSize() const { return _edges.size(); }
 
   virtual std::size_t EdgeSize(const NodePtr& n) const {
     return InEdgeSize(n) + OutEdgeSize(n);
   }
 
   std::size_t InEdgeSize(const NodePtr& n) const {
-    std::size_t res {0};
+    std::size_t res{0};
 
     for (const auto& i : _node_map) {
       res += i.second.count(n->Id());
@@ -82,7 +74,7 @@ class DiGraph {
   }
 
   auto Neighbors(const NodePtr& n) const {
-    decltype(_nodes) res (1, _nodes.hash_function(), _nodes.key_eq());
+    decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
 
     // Add child nodes
     if (const auto& n_child = _node_map.find(n->Id());
@@ -104,16 +96,12 @@ class DiGraph {
   }
 
  private:
-  std::unordered_set<
-      NodePtr,
-      std::function<std::size_t(const NodePtr&)>,
-      std::function<bool(const NodePtr&, const NodePtr&)>>
+  std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
+                     std::function<bool(const NodePtr&, const NodePtr&)>>
       _nodes;
 
-  std::unordered_set<
-      EdgePtr,
-      std::function<std::size_t(const EdgePtr&)>,
-      std::function<bool(const EdgePtr&, const EdgePtr&)>>
+  std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
+                     std::function<bool(const EdgePtr&, const EdgePtr&)>>
       _edges;
 
   std::unordered_map<std::size_t, NodeAdj> _node_map;
@@ -133,8 +121,7 @@ class Graph : public DiGraph<Node, Edge> {
  public:
   Graph()
       : DiGraph<Node, Edge>(utils::NodeHash<Node>, utils::NodeEqual<Node>,
-                            utils::EdgeHash<Edge>, utils::EdgeEqual<Edge>)
-  {}
+                            utils::EdgeHash<Edge>, utils::EdgeEqual<Edge>) {}
 
   void AddEdge(const NodePtr& s, const NodePtr& t) override {
     DiGraph<Node, Edge>::AddEdge(s, t);

@@ -9,9 +9,9 @@
 namespace xgraph::algo {
 
 template <NodeType Node, EdgeType Edge>
-void BFS(const DiGraph<Node, Edge>& graph,
-         const std::shared_ptr<Node>& start,
-         const std::function<void(const std::shared_ptr<Node>&)>& func = std::identity{}) {
+void BFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
+         const std::function<void(const std::shared_ptr<Node>&)>& func =
+             std::identity{}) {
   std::queue<std::shared_ptr<Node>> q;
   std::unordered_map<std::size_t, bool> visited;
 
@@ -39,9 +39,9 @@ void BFS(const DiGraph<Node, Edge>& graph,
 }
 
 template <NodeType Node, EdgeType Edge>
-void DFS(const DiGraph<Node, Edge>& graph,
-         const std::shared_ptr<Node>& start,
-         const std::function<void(const std::shared_ptr<Node>&)>& func = std::identity{}) {
+void DFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
+         const std::function<void(const std::shared_ptr<Node>&)>& func =
+             std::identity{}) {
   std::stack<std::shared_ptr<Node>> s;
   std::unordered_map<std::size_t, bool> visited;
 
@@ -66,7 +66,6 @@ void DFS(const DiGraph<Node, Edge>& graph,
       visited.try_emplace(i->Id(), false);
     }
   }
-
 }
 
-} // namespace xgraph::algo
+}  // namespace xgraph::algo

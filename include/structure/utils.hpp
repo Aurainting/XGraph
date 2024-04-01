@@ -6,7 +6,8 @@
 
 namespace xgraph::utils {
 
-template <NodeType Node> std::size_t NodeHash(const std::shared_ptr<Node> &n) {
+template <NodeType Node>
+std::size_t NodeHash(const std::shared_ptr<Node> &n) {
   return std::hash<std::size_t>{}(n->Id());
 }
 
@@ -17,11 +18,12 @@ bool NodeEqual(const std::shared_ptr<Node> &lhs,
 }
 
 template <NodeType Node>
-void PrintNode(const std::shared_ptr<Node>& n, std::ostream& out = std::cout) {
+void PrintNode(const std::shared_ptr<Node> &n, std::ostream &out = std::cout) {
   out << "Node : " << n->Id() << std::endl;
 }
 
-template <EdgeType Edge> std::size_t DiEdgeHash(const std::shared_ptr<Edge> &e) {
+template <EdgeType Edge>
+std::size_t DiEdgeHash(const std::shared_ptr<Edge> &e) {
   const auto hasher = std::hash<std::size_t>{};
   return hasher(e->Source()->Id()) << 2 ^ hasher(e->Target()->Id());
 }
@@ -32,7 +34,8 @@ bool DiEdgeEqual(const std::shared_ptr<Edge> &lhs,
   return *lhs == *rhs;
 }
 
-template <EdgeType Edge> std::size_t EdgeHash(const std::shared_ptr<Edge> &e) {
+template <EdgeType Edge>
+std::size_t EdgeHash(const std::shared_ptr<Edge> &e) {
   const auto hasher = std::hash<std::size_t>{};
   return hasher(e->Source()->Id()) ^ hasher(e->Target()->Id());
 }
@@ -49,8 +52,8 @@ bool EdgeEqual(const std::shared_ptr<Edge> &lhs,
 }
 
 template <EdgeType Edge>
-void PrintEdge(const std::shared_ptr<Edge>& e, std::ostream& out = std::cout) {
+void PrintEdge(const std::shared_ptr<Edge> &e, std::ostream &out = std::cout) {
   out << "Edge : (" << e->Source() << ", " << e->Target() << ")" << std::endl;
 }
 
-} // namespace xgraph::utils
+}  // namespace xgraph::utils

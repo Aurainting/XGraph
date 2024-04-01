@@ -1,8 +1,9 @@
 #include <iostream>
 
+#include "include/algorithm/traversal.hpp"
 #include "include/structure/node.hpp"
 #include "include/structure/xgraph.hpp"
-#include "include/algorithm/traversal.hpp"
+
 
 int main() {
   auto g = new xgraph::DiGraph();
@@ -33,12 +34,12 @@ int main() {
   auto n0_neigh = g->Neighbors(n_0);
 
   xgraph::algo::BFS<xgraph::MyNode, xgraph::MyEdge<xgraph::MyNode>>(
-      *g, n_0, [] (const std::shared_ptr<xgraph::MyNode>& n) {
+      *g, n_0, [](const std::shared_ptr<xgraph::MyNode>& n) {
         xgraph::utils::PrintNode(n);
       });
 
   xgraph::algo::DFS<xgraph::MyNode, xgraph::MyEdge<xgraph::MyNode>>(
-      *g, n_0, [] (const std::shared_ptr<xgraph::MyNode>& n) {
+      *g, n_0, [](const std::shared_ptr<xgraph::MyNode>& n) {
         xgraph::utils::PrintNode(n);
       });
 

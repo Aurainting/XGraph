@@ -35,4 +35,4 @@ class MyNode {
 };
 
 std::size_t MyNode::ID = 0;
-} // namespace xgraph
+}  // namespace xgraph
