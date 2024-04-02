@@ -7,7 +7,7 @@
 
 
 int main() {
-  auto g = new xgraph::DiGraph();
+  auto g = new xgraph::Graph();
 
   // Add Nodes
   const auto n_0 = std::make_shared<xgraph::MyNode>("0");
@@ -44,6 +44,7 @@ int main() {
         xgraph::utils::PrintNode(n);
       });
 
+  // Graph (Undirected) `Neighbors, OutEdges` need check
   const auto result = xgraph::algo::ShortestPath(*g, n_3, n_2);
 
   delete g;
