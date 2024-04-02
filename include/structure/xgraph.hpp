@@ -50,7 +50,11 @@ class DiGraph {
     }
   }
 
+  auto Nodes() const { return _nodes; }
+
   [[nodiscard]] std::size_t NodeSize() const { return _nodes.size(); }
+
+  auto Edges() const { return _edges; }
 
   [[nodiscard]] virtual std::size_t EdgeSize() const { return _edges.size(); }
 
@@ -72,7 +76,17 @@ class DiGraph {
     return _node_map.at(n->Id()).size();
   }
 
-  auto Neighbors(const NodePtr& n) const {
+  auto OutEdges(const NodePtr& n) const {
+    decltype(_edges) res(1, _edges.hash_function(), _edges.key_eq());
+
+    for (const auto& i : _node_map.at(n->Id())) {
+      res.insert(i.second.lock());
+    }
+
+    return res;
+  }
+
+  auto Children(const NodePtr& n) const {
     decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
 
     // Add child nodes
@@ -83,6 +97,12 @@ class DiGraph {
       }
     }
 
+    return res;
+  }
+
+  auto Parents(const NodePtr& n) const {
+    decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
+
     // Add parent nodes
     for (const auto& i : _node_map) {
       if (const auto& n_parent = i.second.find(n->Id());
@@ -90,6 +110,13 @@ class DiGraph {
         res.insert(n_parent->second.lock()->Source());
       }
     }
+
+    return res;
+  }
+
+  auto Neighbors(const NodePtr& n) const {
+    auto res = Children(n);
+    res.merge(Parents(n));
 
     return res;
   }

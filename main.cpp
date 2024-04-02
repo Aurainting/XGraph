@@ -1,8 +1,9 @@
 #include <iostream>
 
-#include "include/algorithm/traversal.hpp"
 #include "include/structure/node.hpp"
 #include "include/structure/xgraph.hpp"
+#include "include/algorithm/traversal.hpp"
+#include "include/algorithm/shortest_path.hpp"
 
 
 int main() {
@@ -42,6 +43,8 @@ int main() {
       *g, n_0, [](const std::shared_ptr<xgraph::MyNode>& n) {
         xgraph::utils::PrintNode(n);
       });
+
+  const auto result = xgraph::algo::ShortestPath(*g, n_3, n_0);
 
   delete g;
 
