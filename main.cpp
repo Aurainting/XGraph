@@ -44,7 +44,7 @@ int main() {
         xgraph::utils::PrintNode(n);
       });
 
-  const auto result = xgraph::algo::ShortestPath(*g, n_3, n_0);
+  const auto result = xgraph::algo::ShortestPath(*g, n_3, n_2);
 
   delete g;
 

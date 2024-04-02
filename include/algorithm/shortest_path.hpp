@@ -20,11 +20,11 @@ void dijkstra(
     const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& source,
     const std::shared_ptr<Node>& target, std::vector<std::weak_ptr<Edge>>& res) {
   std::unordered_map<std::size_t, bool> visited;
-  std::unordered_map<std::size_t, std::size_t> previous;
+  std::unordered_map<std::size_t, std::shared_ptr<Edge>> previous;
   std::unordered_map<std::size_t, double> distance;
 
   for (const auto& v : graph.Nodes()) {
-    previous[v->Id()] = -1;
+    previous[v->Id()] = nullptr;
     distance[v->Id()] = std::numeric_limits<double>::infinity();
   }
 
@@ -37,7 +37,7 @@ void dijkstra(
 
   current_node.emplace(source);
 
-  while (!current_node.empty()) {
+  while (!current_node.empty() && target && !visited[target->Id()]) {
     const auto n = current_node.top();
     current_node.pop();
 
@@ -49,12 +49,25 @@ void dijkstra(
     for (const auto& i : graph.OutEdges(n)) {
       const auto v = i->Target();
       if (!visited[v->Id()] && distance[v->Id()] > distance[n->Id()] + i->Weight()) {
-        distance[v->Id()] + distance[n->Id()] + i->Weight();
-        previous[v->Id()] = n->Id();
+        distance[v->Id()] = distance[n->Id()] + i->Weight();
+        previous[v->Id()] = i;
 
-        current_node.push(v);
+        current_node.emplace(v);
       }
     }
+  }
+
+  // Extract path
+  if (target) {
+    auto reverse_node = previous[target->Id()]->Source();
+    res.emplace_back(std::weak_ptr<Edge>(previous[target->Id()]));
+
+    while (reverse_node != source) {
+      res.emplace_back(std::weak_ptr<Edge>(previous[reverse_node->Id()]));
+      reverse_node = previous[reverse_node->Id()]->Source();
+    }
+
+    std::reverse(res.begin(), res.end());
   }
 }
 
@@ -68,7 +81,7 @@ void bellman_ford(
 template <NodeType Node, EdgeType Edge>
 std::vector<std::weak_ptr<Edge>> ShortestPath(
     const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& source,
-    const std::shared_ptr<Node>& target,
+    const std::shared_ptr<Node>& target = nullptr,
     const SPMethod& method = SPMethod::Dijkstra) {
   std::vector<std::weak_ptr<Edge>> res {};
 

@@ -73,14 +73,21 @@ class DiGraph {
   }
 
   std::size_t OutEdgeSize(const NodePtr& n) const {
+    if (!_node_map.contains(n->Id())) {
+      return 0;
+    }
+
     return _node_map.at(n->Id()).size();
   }
 
   auto OutEdges(const NodePtr& n) const {
     decltype(_edges) res(1, _edges.hash_function(), _edges.key_eq());
 
-    for (const auto& i : _node_map.at(n->Id())) {
-      res.insert(i.second.lock());
+    if (const auto& n_child = _node_map.find(n->Id());
+        n_child != _node_map.end()) {
+      for (const auto& i : n_child->second) {
+        res.insert(i.second.lock());
+      }
     }
 
     return res;
