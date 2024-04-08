@@ -3,4 +3,7 @@ project(xgraph VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(${PROJECT_NAME} main.cpp)
+include_directories("${CMAKE_SOURCE_DIR}/include")
+
+# Add subdirectory for the tests directory
+add_subdirectory(tests)
