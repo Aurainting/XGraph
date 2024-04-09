@@ -1,10 +1,10 @@
 #pragma once
 
-#include <vector>
 #include <numeric>
 #include <queue>
+#include <vector>
 
-#include "../structure/xgraph.hpp"
+#include "../structure/graph.hpp"
 
 namespace xgraph::algo {
 

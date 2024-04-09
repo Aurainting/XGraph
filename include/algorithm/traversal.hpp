@@ -4,7 +4,7 @@
 #include <stack>
 #include <utility>
 
-#include "../structure/xgraph.hpp"
+#include "../structure/graph.hpp"
 
 namespace xgraph::algo {
 

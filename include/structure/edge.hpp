@@ -25,6 +25,10 @@ class MyEdge {
     // Nothing to do here.
   }
 
+  MyEdge(const MyEdge& other) = delete;
+
+  MyEdge& operator=(const MyEdge& other) = delete;
+
   std::shared_ptr<Node> Source() const { return _source.lock(); }
 
   std::shared_ptr<Node> Target() const { return _target.lock(); }

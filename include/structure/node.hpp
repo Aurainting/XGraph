@@ -7,6 +7,10 @@ class MyNode {
  public:
   explicit MyNode(std::string name) : _id(ID++), _name(std::move(name)) {}
 
+  MyNode(const MyNode& other) : _id(ID++), _name(other._name) {}
+
+  MyNode& operator=(const MyNode& other) = delete;
+
   ~MyNode() { ID--; }
 
   [[nodiscard]] std::size_t Id() const { return _id; }
@@ -33,6 +37,4 @@ class MyNode {
 
   // You can add your own data here.
 };
-
-std::size_t MyNode::ID = 0;
 }  // namespace xgraph
