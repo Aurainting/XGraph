@@ -64,7 +64,8 @@ class DiGraph {
   }
 
   void AddNode(const NodePtr& n) {
-    const auto node_ptr = _nodes.insert(n).first;
+    const auto result = _nodes.insert(n);
+    const auto node_ptr = *(result.first);
     _node_name.insert({node_ptr->Name(), std::weak_ptr<Node>(node_ptr)});
   }
 
