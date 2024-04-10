@@ -25,7 +25,7 @@ void PrintNode(const std::shared_ptr<Node> &n, std::ostream &out = std::cout) {
 
 template <EdgeType Edge>
 std::size_t DiEdgeHash(const std::shared_ptr<Edge> &e) {
-  return NodeHash(e->Source()) << 2 ^ NodeHash(e->Target());
+  return NodeHash(e->Source()) << 2 ^ NodeHash(e->Target()) ^ std::hash<double>{}(e->Weight());
 }
 
 template <EdgeType Edge>
@@ -36,7 +36,7 @@ bool DiEdgeEqual(const std::shared_ptr<Edge> &lhs,
 
 template <EdgeType Edge>
 std::size_t EdgeHash(const std::shared_ptr<Edge> &e) {
-  return NodeHash(e->Source()) ^ NodeHash(e->Target());
+  return NodeHash(e->Source()) ^ NodeHash(e->Target()) ^ std::hash<double>{}(e->Weight());
 }
 
 template <EdgeType Edge>

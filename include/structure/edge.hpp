@@ -18,7 +18,7 @@ class MyEdge {
   }
 
   MyEdge(const std::shared_ptr<Node> &source,
-         const std::shared_ptr<Node> &target, double weight)
+         const std::shared_ptr<Node> &target, const double weight)
       : _source(std::weak_ptr<Node>(source)),
         _target(std::weak_ptr<Node>(target)),
         _weight(weight) {

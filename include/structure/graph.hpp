@@ -70,29 +70,60 @@ class DiGraph {
     _node_name.clear();
   }
 
+
   void AddNode(const NodePtr& n) {
     const auto result = _nodes.insert(n);
     const auto node_ptr = *(result.first);
+
+    // Ensure the validity of the weak pointer.
     _node_name[node_ptr->Name()] = std::weak_ptr<Node>(node_ptr);
   }
 
-  virtual void AddEdge(const NodePtr& s, const NodePtr& t,
-                       const double w = 1.0) {
-    const auto result = _edges.insert(std::make_shared<Edge>(s, t, w));
-    const auto edge_ptr = *(result.first);
-    _adjacent[s->Id()][t->Id()] = std::weak_ptr<Edge>(edge_ptr);
+  void AddNode(const std::string& name) {
+    AddNode(std::make_shared<Node>(name));
   }
 
-  auto Nodes(const std::string& name) const {
+  void AddEdge(const NodePtr& s, const NodePtr& t,
+               const double w = 1.0) {
+    const auto result = _edges.insert(std::make_shared<Edge>(s, t, w));
+    const auto edge_ptr = *(result.first);
+
+    // Ensure the validity of the weak pointer.
+    _adjacent[edge_ptr->Source()->Id()][edge_ptr->Target()->Id()] = std::weak_ptr<Edge>(edge_ptr);
+  }
+
+  void AddEdge(const std::string& s_name, const std::string& t_name, const double w = 1.0) {
+    AddEdge(std::make_shared<Node>(s_name), std::make_shared<Node>(t_name), w);
+  }
+
+  auto GetNode(const std::string& name) const {
     if (const auto res = _node_name.find(name); res != _node_name.end()) {
       return res->lock();
     }
     return nullptr;
   }
 
+  [[nodiscard]] bool HasNode(const std::string& name) const { return _node_name.contains(name); }
+
   auto Nodes() const { return _nodes; }
 
   [[nodiscard]] std::size_t NodeSize() const { return _nodes.size(); }
+
+  auto GetEdge(const std::string& s_name, const std::string& t_name, const double w = 1.0) const {
+    const auto s_node = GetNode(s_name);
+    const auto t_node = GetNode(t_name);
+    if (s_node && t_node) {
+      if (const auto res = _edges.find(std::make_shared<Edge>(s_node, t_node, w));
+          res != _edges.end()) {
+        return *res;
+      }
+    }
+    return nullptr;
+  }
+
+  [[nodiscard]] bool HasEdge(const std::string& s_name, const std::string& t_name, const double w = 1.0) const {
+    return GetEdge(s_name, t_name, w) != nullptr;
+  }
 
   auto Edges() const { return _edges; }
 
@@ -170,11 +201,11 @@ class DiGraph {
 
  private:
   std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
-                     std::function<bool(const NodePtr&, const NodePtr&)>>
+      std::function<bool(const NodePtr&, const NodePtr&)>>
       _nodes;
 
   std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
-                     std::function<bool(const EdgePtr&, const EdgePtr&)>>
+      std::function<bool(const EdgePtr&, const EdgePtr&)>>
       _edges;
 
   std::unordered_map<std::size_t, NodeAdj> _adjacent;
@@ -197,11 +228,6 @@ class Graph : public DiGraph<Node, Edge> {
   Graph()
       : DiGraph<Node, Edge>(utils::NodeHash<Node>, utils::NodeEqual<Node>,
                             utils::EdgeHash<Edge>, utils::EdgeEqual<Edge>) {}
-
-  void AddEdge(const NodePtr& s, const NodePtr& t) override {
-    DiGraph<Node, Edge>::AddEdge(s, t);
-    DiGraph<Node, Edge>::AddEdge(t, s);
-  }
 
   [[nodiscard]] size_t EdgeSize() const override {
     return DiGraph<Node, Edge>::EdgeSize();
