@@ -3,7 +3,6 @@
 #include <functional>
 #include <memory>
 #include <string_view>
-#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -27,7 +26,8 @@ class DiGraph {
   DiGraph()
       : _nodes(1, utils::NodeHash<Node>, utils::NodeEqual<Node>),
         _edges(1, utils::DiEdgeHash<Edge>, utils::DiEdgeEqual<Edge>),
-        _adjacent() {}
+        _adjacent(),
+        _node_name() {}
 
   DiGraph(const std::function<std::size_t(const NodePtr&)>& node_hash,
           const std::function<bool(const NodePtr&, const NodePtr&)>& node_equal,
@@ -35,12 +35,14 @@ class DiGraph {
           const std::function<bool(const EdgePtr&, const EdgePtr&)>& edge_equal)
       : _nodes(1, node_hash, node_equal),
         _edges(1, edge_hash, edge_equal),
-        _adjacent() {}
+        _adjacent(),
+        _node_name() {}
 
   DiGraph(const DiGraph& other)
       : _nodes(1, other._nodes.hash_function(), other._nodes.key_eq()),
         _edges(1, other._edges.hash_function(), other._edges.key_eq()),
-        _adjacent() {
+        _adjacent(),
+        _node_name() {
     // Copy nodes
     for (const auto& n : other._nodes) {
       _nodes.insert(std::make_shared<MyNode>(n->Name()));
@@ -50,8 +52,12 @@ class DiGraph {
     for (const auto& e : other._edges) {
     }
 
-    // Copy node adjacent
+    // Copy adjacent
     for (const auto& i : other._adjacent) {
+    }
+
+    // Copy node name
+    for (const auto& i : other._node_name) {
     }
   }
 
@@ -61,25 +67,19 @@ class DiGraph {
     _nodes.clear();
     _edges.clear();
     _adjacent.clear();
+    _node_name.clear();
   }
 
   void AddNode(const NodePtr& n) {
     const auto result = _nodes.insert(n);
     const auto node_ptr = *(result.first);
-    _node_name.insert({node_ptr->Name(), std::weak_ptr<Node>(node_ptr)});
+    _node_name[node_ptr->Name()] = std::weak_ptr<Node>(node_ptr);
   }
 
-  virtual void AddEdge(const NodePtr& s, const NodePtr& t) {
-    const auto e = std::make_shared<Edge>(s, t);
-
-    if (const auto& i = _edges.find(e); i != _edges.end()) {
-      // exist before
-      _adjacent[s->Id()][t->Id()] = std::weak_ptr<Edge>(*i);
-    } else {
-      // new element
-      _edges.insert(e);
-      _adjacent[s->Id()][t->Id()] = std::weak_ptr<Edge>(e);
-    }
+  virtual void AddEdge(const NodePtr& s, const NodePtr& t, const double w = 1.0) {
+    const auto result = _edges.insert(std::make_shared<Edge>(s, t, w));
+    const auto edge_ptr = *(result.first);
+    _adjacent[s->Id()][t->Id()] = std::weak_ptr<Edge>(edge_ptr);
   }
 
   auto Nodes() const { return _nodes; }
