@@ -238,8 +238,6 @@ class DiGraph {
 template <NodeType Node = MyNode, EdgeType Edge = MyEdge<Node>>
 class Graph : public DiGraph<Node, Edge> {
   using NodePtr = std::shared_ptr<Node>;
-  using EdgePtr = std::shared_ptr<Edge>;
-  using NodeAdj = std::unordered_map<std::size_t, std::weak_ptr<Edge>>;
 
  public:
   Graph()

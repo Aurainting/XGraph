@@ -69,8 +69,21 @@ void digraph_test(const int n = 10) {
   std::cout << "DiGraph with " << n << " nodes test succeed!" << std::endl;
 }
 
+void graph_test(const int n = 10) {
+  using xgraph::MyEdge;
+  using xgraph::MyNode;
+
+  auto graph = std::make_shared<xgraph::DiGraph<>>();
+
+  // Add nodes
+
+  std::cout << "Graph with " << n << " nodes test succeed!" << std::endl;
+}
+
 int main() {
-  digraph_test(5);
+  digraph_test();
+
+  graph_test();
 
   std::cout << "Test Done!" << std::endl;
 }
