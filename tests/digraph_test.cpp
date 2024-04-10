@@ -3,19 +3,17 @@
 
 #include "../include/xgraph.hpp"
 
-auto complete_digraph_test (const int n) {
-  using xgraph::MyNode;
+auto complete_digraph_test(const int n) {
   using xgraph::MyEdge;
+  using xgraph::MyNode;
 
   auto graph = std::make_shared<xgraph::DiGraph<>>();
 
   // Add nodes
   for (int i = 0; i < n; ++i) {
-    graph->AddNode(
-        std::make_shared<MyNode>(std::to_string(i))
-    );
+    graph->AddNode(std::make_shared<MyNode>(std::to_string(i)));
   }
-  assert(graph->NodeSize()==n);
+  assert(graph->NodeSize() == n);
 
   // Add edges
   for (int i = 0; i < n; ++i) {

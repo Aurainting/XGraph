@@ -76,10 +76,18 @@ class DiGraph {
     _node_name[node_ptr->Name()] = std::weak_ptr<Node>(node_ptr);
   }
 
-  virtual void AddEdge(const NodePtr& s, const NodePtr& t, const double w = 1.0) {
+  virtual void AddEdge(const NodePtr& s, const NodePtr& t,
+                       const double w = 1.0) {
     const auto result = _edges.insert(std::make_shared<Edge>(s, t, w));
     const auto edge_ptr = *(result.first);
     _adjacent[s->Id()][t->Id()] = std::weak_ptr<Edge>(edge_ptr);
+  }
+
+  auto Nodes(const std::string& name) const {
+    if (const auto res = _node_name.find(name); res != _node_name.end()) {
+      return res->lock();
+    }
+    return nullptr;
   }
 
   auto Nodes() const { return _nodes; }
