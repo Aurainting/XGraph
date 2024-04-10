@@ -64,15 +64,8 @@ class DiGraph {
   }
 
   void AddNode(const NodePtr& n) {
-    /*
-    NodePtr p {nullptr};
-    std::tie(p, std::ignore) = _nodes.insert(n);
-
-    if (p) {
-      _node_name.insert({n->Name(), std::weak_ptr<Node>(*p)});
-    }
-    */
-    auto result = _nodes.insert(n);
+    const auto node_ptr = _nodes.insert(n).first;
+    _node_name.insert({node_ptr->Name(), std::weak_ptr<Node>(node_ptr)});
   }
 
   virtual void AddEdge(const NodePtr& s, const NodePtr& t) {
