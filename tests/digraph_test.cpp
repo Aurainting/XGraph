@@ -3,7 +3,7 @@
 
 #include "../include/xgraph.hpp"
 
-auto digraph_test(const int n = 10) {
+void digraph_test(const int n = 10) {
   using xgraph::MyEdge;
   using xgraph::MyNode;
 
@@ -60,16 +60,17 @@ auto digraph_test(const int n = 10) {
   assert(graph->InEdgeSize("0") == 0);
   assert(graph->OutEdgeSize("0") == n - 1);
 
-  return graph;
+  assert(graph->OutEdges("0").contains(some_edge_test));
+
+  assert(graph->Children("source").contains(t_node));
+
+  assert(graph->Neighbors("target").contains(s_node));
+
+  std::cout << "DiGraph with " << n << " nodes test succeed!" << std::endl;
 }
 
 int main() {
-  auto s_ha = std::hash<std::string>{}("source");
-  std::cout << s_ha << std::endl;
+  digraph_test(5);
 
-  auto g = digraph_test(5);
-
-  auto g_copy = xgraph::DiGraph(*g);
-
-  std::cout << "Test Succeed!" << std::endl;
+  std::cout << "Test Done!" << std::endl;
 }

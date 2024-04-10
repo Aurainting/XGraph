@@ -155,33 +155,37 @@ class DiGraph {
     return _adjacent.at(node->Id()).size();
   }
 
-  auto InEdges(const NodePtr& n) const {
+  auto InEdges(const std::string& n) const {
     decltype(_edges) res(1, _edges.hash_function(), _edges.key_eq());
 
-    for (const auto& i : _adjacent) {
-      if (const auto& n_parent = i.second.find(n->Id());
-          n_parent != i.second.end()) {
-        res.insert(n_parent->second.lock());
+    if (const auto node = GetNode(n)) {
+      for (const auto& i : _adjacent) {
+        if (const auto& n_parent = i.second.find(node->Id());
+            n_parent != i.second.end()) {
+          res.insert(n_parent->second.lock());
+        }
       }
     }
 
     return res;
   }
 
-  auto OutEdges(const NodePtr& n) const {
+  auto OutEdges(const std::string& n) const {
     decltype(_edges) res(1, _edges.hash_function(), _edges.key_eq());
 
-    if (const auto& n_child = _adjacent.find(n->Id());
-        n_child != _adjacent.end()) {
-      for (const auto& i : n_child->second) {
-        res.insert(i.second.lock());
+    if (const auto node = GetNode(n)) {
+      if (const auto& n_child = _adjacent.find(node->Id());
+          n_child != _adjacent.end()) {
+        for (const auto& i : n_child->second) {
+          res.insert(i.second.lock());
+        }
       }
     }
 
     return res;
   }
 
-  auto Children(const NodePtr& n) const {
+  auto Children(const std::string& n) const {
     decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
 
     // Add child nodes
@@ -193,7 +197,7 @@ class DiGraph {
     return res;
   }
 
-  auto Parents(const NodePtr& n) const {
+  auto Parents(const std::string& n) const {
     decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
 
     // Add parent nodes
@@ -205,7 +209,7 @@ class DiGraph {
     return res;
   }
 
-  auto Neighbors(const NodePtr& n) const {
+  auto Neighbors(const std::string& n) const {
     auto res = Children(n);
     res.merge(Parents(n));
 
