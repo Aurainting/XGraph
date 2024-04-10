@@ -2,7 +2,7 @@
 
 #include <functional>
 #include <memory>
-#include <string_view>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -70,7 +70,6 @@ class DiGraph {
     _node_name.clear();
   }
 
-
   void AddNode(const NodePtr& n) {
     const auto result = _nodes.insert(n);
     const auto node_ptr = *(result.first);
@@ -85,8 +84,9 @@ class DiGraph {
 
   void AddEdge(const NodePtr& s, const NodePtr& t,
                const double w = 1.0) {
-    const auto result = _edges.insert(std::make_shared<Edge>(s, t, w));
-    const auto edge_ptr = *(result.first);
+    const auto s_node_ptr = *(_nodes.insert(s).first);
+    const auto t_node_ptr = *(_nodes.insert(t).first);
+    const auto edge_ptr = *(_edges.insert(std::make_shared<Edge>(s_node_ptr, t_node_ptr, w)).first);
 
     // Ensure the validity of the weak pointer.
     _adjacent[edge_ptr->Source()->Id()][edge_ptr->Target()->Id()] = std::weak_ptr<Edge>(edge_ptr);
@@ -96,9 +96,9 @@ class DiGraph {
     AddEdge(std::make_shared<Node>(s_name), std::make_shared<Node>(t_name), w);
   }
 
-  auto GetNode(const std::string& name) const {
+  NodePtr GetNode(const std::string& name) const {
     if (const auto res = _node_name.find(name); res != _node_name.end()) {
-      return res->lock();
+      return res->second.lock();
     }
     return nullptr;
   }
@@ -109,7 +109,7 @@ class DiGraph {
 
   [[nodiscard]] std::size_t NodeSize() const { return _nodes.size(); }
 
-  auto GetEdge(const std::string& s_name, const std::string& t_name, const double w = 1.0) const {
+  EdgePtr GetEdge(const std::string& s_name, const std::string& t_name, const double w = 1.0) const {
     const auto s_node = GetNode(s_name);
     const auto t_node = GetNode(t_name);
     if (s_node && t_node) {
@@ -129,26 +129,43 @@ class DiGraph {
 
   [[nodiscard]] virtual std::size_t EdgeSize() const { return _edges.size(); }
 
-  virtual std::size_t EdgeSize(const NodePtr& n) const {
+  [[nodiscard]] virtual std::size_t EdgeSize(const std::string& n) const {
     return InEdgeSize(n) + OutEdgeSize(n);
   }
 
-  std::size_t InEdgeSize(const NodePtr& n) const {
+  [[nodiscard]] std::size_t InEdgeSize(const std::string& n) const {
     std::size_t res{0};
 
-    for (const auto& i : _adjacent) {
-      res += i.second.count(n->Id());
+    if (const auto node = GetNode(n)) {
+      for (const auto& i : _adjacent) {
+        res += i.second.count(node->Id());
+      }
     }
 
     return res;
   }
 
-  std::size_t OutEdgeSize(const NodePtr& n) const {
-    if (!_adjacent.contains(n->Id())) {
+  [[nodiscard]] std::size_t OutEdgeSize(const std::string& n) const {
+    const auto node = GetNode(n);
+
+    if (!node || !_adjacent.contains(node->Id())) {
       return 0;
     }
 
-    return _adjacent.at(n->Id()).size();
+    return _adjacent.at(node->Id()).size();
+  }
+
+  auto InEdges(const NodePtr& n) const {
+    decltype(_edges) res(1, _edges.hash_function(), _edges.key_eq());
+
+    for (const auto& i : _adjacent) {
+      if (const auto& n_parent = i.second.find(n->Id());
+          n_parent != i.second.end()) {
+        res.insert(n_parent->second.lock());
+      }
+    }
+
+    return res;
   }
 
   auto OutEdges(const NodePtr& n) const {
@@ -168,11 +185,9 @@ class DiGraph {
     decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
 
     // Add child nodes
-    if (const auto& n_child = _adjacent.find(n->Id());
-        n_child != _adjacent.end()) {
-      for (const auto& i : n_child->second) {
-        res.insert(i.second.lock()->Target());
-      }
+    const auto out_edges = OutEdges(n);
+    for (const auto& i : out_edges) {
+      res.insert(i->Target());
     }
 
     return res;
@@ -182,11 +197,9 @@ class DiGraph {
     decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
 
     // Add parent nodes
-    for (const auto& i : _adjacent) {
-      if (const auto& n_parent = i.second.find(n->Id());
-          n_parent != i.second.end()) {
-        res.insert(n_parent->second.lock()->Source());
-      }
+    const auto in_edges = InEdges(n);
+    for (const auto& i : in_edges) {
+      res.insert(i->Source());
     }
 
     return res;
@@ -210,7 +223,7 @@ class DiGraph {
 
   std::unordered_map<std::size_t, NodeAdj> _adjacent;
 
-  std::unordered_map<std::string_view, std::weak_ptr<Node>> _node_name;
+  std::unordered_map<std::string, std::weak_ptr<Node>> _node_name;
 };
 
 /*!

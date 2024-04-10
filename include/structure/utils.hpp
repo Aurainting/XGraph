@@ -2,14 +2,14 @@
 
 #include <iostream>
 
+#include "node.hpp"
 #include "edge.hpp"
 
 namespace xgraph::utils {
 
 template <NodeType Node>
 std::size_t NodeHash(const std::shared_ptr<Node> &n) {
-  return std::hash<std::size_t>{}(n->Id()) ^
-         std::hash<std::string>{}(n->Name());
+  return n->Id();
 }
 
 template <NodeType Node>
@@ -20,7 +20,7 @@ bool NodeEqual(const std::shared_ptr<Node> &lhs,
 
 template <NodeType Node>
 void PrintNode(const std::shared_ptr<Node> &n, std::ostream &out = std::cout) {
-  out << "Node : " << n->Name() << " (id = " << n->Id() << ")" << std::endl;
+  out << "Node : " << n->Name() << std::endl;
 }
 
 template <EdgeType Edge>

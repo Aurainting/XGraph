@@ -10,15 +10,7 @@ template <NodeType Node = MyNode>
 class MyEdge {
  public:
   MyEdge(const std::shared_ptr<Node> &source,
-         const std::shared_ptr<Node> &target)
-      : _source(std::weak_ptr<Node>(source)),
-        _target(std::weak_ptr<Node>(target)),
-        _weight(1.0) {
-    // Nothing to do here.
-  }
-
-  MyEdge(const std::shared_ptr<Node> &source,
-         const std::shared_ptr<Node> &target, const double weight)
+         const std::shared_ptr<Node> &target, const double weight = 1.0)
       : _source(std::weak_ptr<Node>(source)),
         _target(std::weak_ptr<Node>(target)),
         _weight(weight) {

@@ -1,15 +1,12 @@
 #pragma once
 
-#include <chrono>
-#include <cstddef>
 #include <string>
 
 namespace xgraph {
 class MyNode {
  public:
   explicit MyNode(std::string name)
-      : _id(static_cast<std::size_t>(
-            std::chrono::steady_clock::now().time_since_epoch().count())),
+      : _id(std::hash<std::string>{}(name)),
         _name(std::move(name)) {}
 
   MyNode(const MyNode& other) : _id(other.Id()), _name(other.Name()) {}
@@ -23,12 +20,12 @@ class MyNode {
   [[nodiscard]] std::string Name() const { return _name; }
 
   bool operator==(const MyNode& other) const {
-    return _id == other.Id() && _name == other.Name();
+    return _name == other.Name();
   }
 
  private:
   /*!
-   * @brief Node's identification.
+   * @brief Node's identification (come from `name`).
    *
    */
   const std::size_t _id;
