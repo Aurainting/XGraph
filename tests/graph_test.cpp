@@ -1,8 +1,8 @@
 #include <iostream>
 
-/*
 #include "../include/xgraph.hpp"
 
+/*
 auto complete_graph_test (const int n) {
   using xgraph::MyNode;
   using xgraph::MyEdge;

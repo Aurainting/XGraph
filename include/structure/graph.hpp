@@ -36,9 +36,9 @@ class DiGraph {
         _node_map() {}
 
   DiGraph(const DiGraph& other)
-      : _nodes(1, other._nodes.hash_function(), other._nodes.key_eq())
-      , _edges(1, other._edges.hash_function(), other._edges.key_eq())
-      , _node_map() {
+      : _nodes(1, other._nodes.hash_function(), other._nodes.key_eq()),
+        _edges(1, other._edges.hash_function(), other._edges.key_eq()),
+        _node_map() {
     // Copy nodes
     for (const auto& n : other._nodes) {
       _nodes.insert(std::make_shared<MyNode>(n->Name()));
@@ -46,12 +46,10 @@ class DiGraph {
 
     // Copy edges
     for (const auto& e : other._edges) {
-
     }
 
     // Copy node adjacent
     for (const auto& i : other._node_map) {
-
     }
   }
 
@@ -62,7 +60,6 @@ class DiGraph {
     _edges.clear();
     _node_map.clear();
   }
-
 
   void AddNode(const NodePtr& n) { _nodes.insert(n); }
 
@@ -159,11 +156,11 @@ class DiGraph {
 
  private:
   std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
-      std::function<bool(const NodePtr&, const NodePtr&)>>
+                     std::function<bool(const NodePtr&, const NodePtr&)>>
       _nodes;
 
   std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
-      std::function<bool(const EdgePtr&, const EdgePtr&)>>
+                     std::function<bool(const EdgePtr&, const EdgePtr&)>>
       _edges;
 
   std::unordered_map<std::size_t, NodeAdj> _node_map;

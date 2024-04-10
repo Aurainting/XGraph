@@ -20,7 +20,7 @@ class MyNode {
   bool operator==(const MyNode &other) const { return _id == other.Id(); }
 
  protected:
-  static std::size_t ID;
+  inline static std::size_t ID = 0;
 
  private:
   /*!

@@ -16,9 +16,10 @@ enum class SPMethod {
 namespace impl {
 
 template <NodeType Node, EdgeType Edge>
-void dijkstra(
-    const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& source,
-    const std::shared_ptr<Node>& target, std::vector<std::weak_ptr<Edge>>& res) {
+void dijkstra(const DiGraph<Node, Edge>& graph,
+              const std::shared_ptr<Node>& source,
+              const std::shared_ptr<Node>& target,
+              std::vector<std::weak_ptr<Edge>>& res) {
   std::unordered_map<std::size_t, bool> visited;
   std::unordered_map<std::size_t, std::shared_ptr<Edge>> previous;
   std::unordered_map<std::size_t, double> distance;
@@ -30,10 +31,13 @@ void dijkstra(
 
   distance[source->Id()] = 0;
 
-  const auto node_comp = [&distance] (const std::shared_ptr<Node>& lhs, const std::shared_ptr<Node>& rhs) {
+  const auto node_comp = [&distance](const std::shared_ptr<Node>& lhs,
+                                     const std::shared_ptr<Node>& rhs) {
     return distance[lhs->Id()] > distance[rhs->Id()];
   };
-  auto current_node = std::priority_queue<std::shared_ptr<Node>, std::vector<std::shared_ptr<Node>>, decltype(node_comp)>(node_comp);
+  auto current_node = std::priority_queue<std::shared_ptr<Node>,
+                                          std::vector<std::shared_ptr<Node>>,
+                                          decltype(node_comp)>(node_comp);
 
   current_node.emplace(source);
 
@@ -48,7 +52,8 @@ void dijkstra(
 
     for (const auto& i : graph.OutEdges(n)) {
       const auto v = i->Target();
-      if (!visited[v->Id()] && distance[v->Id()] > distance[n->Id()] + i->Weight()) {
+      if (!visited[v->Id()] &&
+          distance[v->Id()] > distance[n->Id()] + i->Weight()) {
         distance[v->Id()] = distance[n->Id()] + i->Weight();
         previous[v->Id()] = i;
 
@@ -72,9 +77,10 @@ void dijkstra(
 }
 
 template <NodeType Node, EdgeType Edge>
-void bellman_ford(
-    const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& source,
-    const std::shared_ptr<Node>& target, std::vector<std::weak_ptr<Edge>>& res) {}
+void bellman_ford(const DiGraph<Node, Edge>& graph,
+                  const std::shared_ptr<Node>& source,
+                  const std::shared_ptr<Node>& target,
+                  std::vector<std::weak_ptr<Edge>>& res) {}
 
 }  // namespace impl
 
@@ -83,7 +89,7 @@ std::vector<std::weak_ptr<Edge>> ShortestPath(
     const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& source,
     const std::shared_ptr<Node>& target = nullptr,
     const SPMethod& method = SPMethod::Dijkstra) {
-  std::vector<std::weak_ptr<Edge>> res {};
+  std::vector<std::weak_ptr<Edge>> res{};
 
   // Choose method
   switch (method) {
