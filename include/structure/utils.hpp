@@ -8,7 +8,8 @@ namespace xgraph::utils {
 
 template <NodeType Node>
 std::size_t NodeHash(const std::shared_ptr<Node> &n) {
-  return std::hash<std::size_t>{}(n->Id());
+  return std::hash<std::size_t>{}(n->Id()) ^
+         std::hash<std::string>{}(n->Name());
 }
 
 template <NodeType Node>
@@ -19,13 +20,12 @@ bool NodeEqual(const std::shared_ptr<Node> &lhs,
 
 template <NodeType Node>
 void PrintNode(const std::shared_ptr<Node> &n, std::ostream &out = std::cout) {
-  out << "Node : " << n->Id() << std::endl;
+  out << "Node : " << n->Name() << " (id = " << n->Id() << ")" << std::endl;
 }
 
 template <EdgeType Edge>
 std::size_t DiEdgeHash(const std::shared_ptr<Edge> &e) {
-  const auto hasher = std::hash<std::size_t>{};
-  return hasher(e->Source()->Id()) << 2 ^ hasher(e->Target()->Id());
+  return NodeHash(e->Source()) << 2 ^ NodeHash(e->Target());
 }
 
 template <EdgeType Edge>
@@ -36,24 +36,24 @@ bool DiEdgeEqual(const std::shared_ptr<Edge> &lhs,
 
 template <EdgeType Edge>
 std::size_t EdgeHash(const std::shared_ptr<Edge> &e) {
-  const auto hasher = std::hash<std::size_t>{};
-  return hasher(e->Source()->Id()) ^ hasher(e->Target()->Id());
+  return NodeHash(e->Source()) ^ NodeHash(e->Target());
 }
 
 template <EdgeType Edge>
-std::shared_ptr<Edge> SwapEdge(const std::shared_ptr<Edge> &e) {
-  return std::make_shared<Edge>(e->Target(), e->Source());
+std::shared_ptr<Edge> ReverseEdge(const std::shared_ptr<Edge> &e) {
+  return std::make_shared<Edge>(e->Target(), e->Source(), e->Weight());
 }
 
 template <EdgeType Edge>
 bool EdgeEqual(const std::shared_ptr<Edge> &lhs,
                const std::shared_ptr<Edge> &rhs) {
-  return *lhs == *rhs || *(SwapEdge(lhs)) == *rhs;
+  return *lhs == *rhs || *(ReverseEdge(lhs)) == *rhs;
 }
 
 template <EdgeType Edge>
 void PrintEdge(const std::shared_ptr<Edge> &e, std::ostream &out = std::cout) {
-  out << "Edge : (" << e->Source() << ", " << e->Target() << ")" << std::endl;
+  out << "Edge : (" << e->Source()->Name() << ", " << e->Target()->Name() << ")"
+      << std::endl;
 }
 
 }  // namespace xgraph::utils

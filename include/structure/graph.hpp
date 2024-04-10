@@ -2,6 +2,8 @@
 
 #include <functional>
 #include <memory>
+#include <string_view>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -25,7 +27,7 @@ class DiGraph {
   DiGraph()
       : _nodes(1, utils::NodeHash<Node>, utils::NodeEqual<Node>),
         _edges(1, utils::DiEdgeHash<Edge>, utils::DiEdgeEqual<Edge>),
-        _node_map() {}
+        _adjacent() {}
 
   DiGraph(const std::function<std::size_t(const NodePtr&)>& node_hash,
           const std::function<bool(const NodePtr&, const NodePtr&)>& node_equal,
@@ -33,12 +35,12 @@ class DiGraph {
           const std::function<bool(const EdgePtr&, const EdgePtr&)>& edge_equal)
       : _nodes(1, node_hash, node_equal),
         _edges(1, edge_hash, edge_equal),
-        _node_map() {}
+        _adjacent() {}
 
   DiGraph(const DiGraph& other)
       : _nodes(1, other._nodes.hash_function(), other._nodes.key_eq()),
         _edges(1, other._edges.hash_function(), other._edges.key_eq()),
-        _node_map() {
+        _adjacent() {
     // Copy nodes
     for (const auto& n : other._nodes) {
       _nodes.insert(std::make_shared<MyNode>(n->Name()));
@@ -49,7 +51,7 @@ class DiGraph {
     }
 
     // Copy node adjacent
-    for (const auto& i : other._node_map) {
+    for (const auto& i : other._adjacent) {
     }
   }
 
@@ -58,21 +60,31 @@ class DiGraph {
   ~DiGraph() {
     _nodes.clear();
     _edges.clear();
-    _node_map.clear();
+    _adjacent.clear();
   }
 
-  void AddNode(const NodePtr& n) { _nodes.insert(n); }
+  void AddNode(const NodePtr& n) {
+    /*
+    NodePtr p {nullptr};
+    std::tie(p, std::ignore) = _nodes.insert(n);
+
+    if (p) {
+      _node_name.insert({n->Name(), std::weak_ptr<Node>(*p)});
+    }
+    */
+    auto result = _nodes.insert(n);
+  }
 
   virtual void AddEdge(const NodePtr& s, const NodePtr& t) {
     const auto e = std::make_shared<Edge>(s, t);
 
     if (const auto& i = _edges.find(e); i != _edges.end()) {
       // exist before
-      _node_map[s->Id()][t->Id()] = std::weak_ptr<Edge>(*i);
+      _adjacent[s->Id()][t->Id()] = std::weak_ptr<Edge>(*i);
     } else {
       // new element
       _edges.insert(e);
-      _node_map[s->Id()][t->Id()] = std::weak_ptr<Edge>(e);
+      _adjacent[s->Id()][t->Id()] = std::weak_ptr<Edge>(e);
     }
   }
 
@@ -91,7 +103,7 @@ class DiGraph {
   std::size_t InEdgeSize(const NodePtr& n) const {
     std::size_t res{0};
 
-    for (const auto& i : _node_map) {
+    for (const auto& i : _adjacent) {
       res += i.second.count(n->Id());
     }
 
@@ -99,18 +111,18 @@ class DiGraph {
   }
 
   std::size_t OutEdgeSize(const NodePtr& n) const {
-    if (!_node_map.contains(n->Id())) {
+    if (!_adjacent.contains(n->Id())) {
       return 0;
     }
 
-    return _node_map.at(n->Id()).size();
+    return _adjacent.at(n->Id()).size();
   }
 
   auto OutEdges(const NodePtr& n) const {
     decltype(_edges) res(1, _edges.hash_function(), _edges.key_eq());
 
-    if (const auto& n_child = _node_map.find(n->Id());
-        n_child != _node_map.end()) {
+    if (const auto& n_child = _adjacent.find(n->Id());
+        n_child != _adjacent.end()) {
       for (const auto& i : n_child->second) {
         res.insert(i.second.lock());
       }
@@ -123,8 +135,8 @@ class DiGraph {
     decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
 
     // Add child nodes
-    if (const auto& n_child = _node_map.find(n->Id());
-        n_child != _node_map.end()) {
+    if (const auto& n_child = _adjacent.find(n->Id());
+        n_child != _adjacent.end()) {
       for (const auto& i : n_child->second) {
         res.insert(i.second.lock()->Target());
       }
@@ -137,7 +149,7 @@ class DiGraph {
     decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
 
     // Add parent nodes
-    for (const auto& i : _node_map) {
+    for (const auto& i : _adjacent) {
       if (const auto& n_parent = i.second.find(n->Id());
           n_parent != i.second.end()) {
         res.insert(n_parent->second.lock()->Source());
@@ -163,7 +175,9 @@ class DiGraph {
                      std::function<bool(const EdgePtr&, const EdgePtr&)>>
       _edges;
 
-  std::unordered_map<std::size_t, NodeAdj> _node_map;
+  std::unordered_map<std::size_t, NodeAdj> _adjacent;
+
+  std::unordered_map<std::string_view, std::weak_ptr<Node>> _node_name;
 };
 
 /*!

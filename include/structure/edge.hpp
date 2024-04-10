@@ -25,9 +25,11 @@ class MyEdge {
     // Nothing to do here.
   }
 
-  MyEdge(const MyEdge& other) = delete;
+  MyEdge(const MyEdge &other) = delete;
 
-  MyEdge& operator=(const MyEdge& other) = delete;
+  MyEdge &operator=(const MyEdge &other) = delete;
+
+  ~MyEdge() = default;
 
   std::shared_ptr<Node> Source() const { return _source.lock(); }
 
@@ -36,7 +38,8 @@ class MyEdge {
   [[nodiscard]] double Weight() const { return _weight; }
 
   bool operator==(const MyEdge &other) const {
-    return _source.lock() == other.Source() && _target.lock() == other.Target();
+    return *(_source.lock()) == *(other.Source()) &&
+           *(_target.lock()) == *(other.Target()) && _weight == other.Weight();
   }
 
  private:

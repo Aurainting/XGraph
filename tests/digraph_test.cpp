@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iostream>
 
 #include "../include/xgraph.hpp"
@@ -14,6 +15,7 @@ auto complete_digraph_test (const int n) {
         std::make_shared<MyNode>(std::to_string(i))
     );
   }
+  assert(graph->NodeSize()==n);
 
   // Add edges
   for (int i = 0; i < n; ++i) {
