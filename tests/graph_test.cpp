@@ -73,7 +73,7 @@ void graph_test(const int n = 10) {
   using xgraph::MyEdge;
   using xgraph::MyNode;
 
-  auto graph = std::make_shared<xgraph::DiGraph<>>();
+  auto graph = std::make_shared<xgraph::Graph<>>();
 
   // Add nodes
 
