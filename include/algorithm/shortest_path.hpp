@@ -15,6 +15,16 @@ enum class SPMethod {
 
 namespace impl {
 
+/*!
+ * @brief 
+ * 
+ * @tparam Node 
+ * @tparam Edge 
+ * @param graph 
+ * @param source 
+ * @param target 
+ * @param res 
+ */
 template <NodeType Node, EdgeType Edge>
 void dijkstra(const DiGraph<Node, Edge>& graph,
               const std::shared_ptr<Node>& source,
@@ -75,6 +85,24 @@ void dijkstra(const DiGraph<Node, Edge>& graph,
     std::reverse(res.begin(), res.end());
   }
 }
+
+/*!
+ * @brief 
+ *
+ * @cite A Randomized Algorithm for Single-Source Shortest Path on Undirected Real-Weighted Graphs (https://doi.org/10.1109/FOCS57990.2023.00035)
+ * 
+ * @tparam Node 
+ * @tparam Edge 
+ * @param graph 
+ * @param source 
+ * @param target 
+ * @param res 
+ */
+template <NodeType Node, EdgeType Edge>
+void dijkstra(const Graph<Node, Edge>& graph,
+              const std::shared_ptr<Node>& source,
+              const std::shared_ptr<Node>& target,
+              std::vector<std::weak_ptr<Edge>>& res) {}
 
 template <NodeType Node, EdgeType Edge>
 void bellman_ford(const DiGraph<Node, Edge>& graph,
