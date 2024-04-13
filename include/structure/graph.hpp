@@ -127,9 +127,9 @@ class DiGraph {
 
   auto Edges() const { return _edges; }
 
-  [[nodiscard]] virtual std::size_t EdgeSize() const { return _edges.size(); }
+  [[nodiscard]] std::size_t EdgeSize() const { return _edges.size(); }
 
-  [[nodiscard]] virtual std::size_t EdgeSize(const std::string& n) const {
+  [[nodiscard]] std::size_t EdgeSize(const std::string& n) const {
     return InEdgeSize(n) + OutEdgeSize(n);
   }
 
@@ -243,14 +243,6 @@ class Graph : public DiGraph<Node, Edge> {
   Graph()
       : DiGraph<Node, Edge>(utils::NodeHash<Node>, utils::NodeEqual<Node>,
                             utils::EdgeHash<Edge>, utils::EdgeEqual<Edge>) {}
-
-  [[nodiscard]] size_t EdgeSize() const override {
-    return DiGraph<Node, Edge>::EdgeSize();
-  }
-
-  size_t EdgeSize(const NodePtr& n) const override {
-    return DiGraph<Node, Edge>::OutEdgeSize(n);
-  }
 };
 
 }  // namespace xgraph
