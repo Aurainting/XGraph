@@ -86,6 +86,11 @@ class DiGraph {
                const double w = 1.0) {
     const auto s_node_ptr = *(_nodes.insert(s).first);
     const auto t_node_ptr = *(_nodes.insert(t).first);
+
+    if (s_node_ptr == t_node_ptr) {
+      return;
+    }
+
     const auto edge_ptr = *(_edges.insert(std::make_shared<Edge>(s_node_ptr, t_node_ptr, w)).first);
 
     // Ensure the validity of the weak pointer.
@@ -103,11 +108,11 @@ class DiGraph {
     return nullptr;
   }
 
-  [[nodiscard]] bool HasNode(const std::string& name) const { return _node_name.contains(name); }
+  [[nodiscard]] bool HasNode(const std::string& name) const { return GetNode(name) != nullptr; }
 
   auto Nodes() const { return _nodes; }
 
-  [[nodiscard]] std::size_t NodeSize() const { return _nodes.size(); }
+  [[nodiscard]] std::size_t NodeSize() const { return Nodes().size(); }
 
   EdgePtr GetEdge(const std::string& s_name, const std::string& t_name, const double w = 1.0) const {
     const auto s_node = GetNode(s_name);
@@ -127,38 +132,20 @@ class DiGraph {
 
   auto Edges() const { return _edges; }
 
-  [[nodiscard]] std::size_t EdgeSize() const { return _edges.size(); }
-
-  [[nodiscard]] std::size_t EdgeSize(const std::string& n) const {
-    return InEdgeSize(n) + OutEdgeSize(n);
-  }
-
-  [[nodiscard]] std::size_t InEdgeSize(const std::string& n) const {
-    std::size_t res{0};
-
-    if (const auto node = GetNode(n)) {
-      for (const auto& i : _adjacent) {
-        res += i.second.count(node->Id());
-      }
-    }
+  auto Edges(const std::string& name) const {
+    auto res = DiGraph<Node, Edge>::InEdges(name);
+    res.merge(DiGraph<Node, Edge>::OutEdges(name));
 
     return res;
   }
 
-  [[nodiscard]] std::size_t OutEdgeSize(const std::string& n) const {
-    const auto node = GetNode(n);
-
-    if (!node || !_adjacent.contains(node->Id())) {
-      return 0;
-    }
-
-    return _adjacent.at(node->Id()).size();
-  }
-
-  auto InEdges(const std::string& n) const {
+  virtual
+      std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
+                         std::function<bool(const EdgePtr&, const EdgePtr&)>>
+      InEdges(const std::string& name) const {
     decltype(_edges) res(1, _edges.hash_function(), _edges.key_eq());
 
-    if (const auto node = GetNode(n)) {
+    if (const auto node = GetNode(name)) {
       for (const auto& i : _adjacent) {
         if (const auto& n_parent = i.second.find(node->Id());
             n_parent != i.second.end()) {
@@ -170,10 +157,13 @@ class DiGraph {
     return res;
   }
 
-  auto OutEdges(const std::string& n) const {
+  virtual
+      std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
+                         std::function<bool(const EdgePtr&, const EdgePtr&)>>
+      OutEdges(const std::string& name) const {
     decltype(_edges) res(1, _edges.hash_function(), _edges.key_eq());
 
-    if (const auto node = GetNode(n)) {
+    if (const auto node = GetNode(name)) {
       if (const auto& n_child = _adjacent.find(node->Id());
           n_child != _adjacent.end()) {
         for (const auto& i : n_child->second) {
@@ -185,11 +175,28 @@ class DiGraph {
     return res;
   }
 
-  auto Children(const std::string& n) const {
+  [[nodiscard]] std::size_t EdgeSize() const { return Edges().size(); }
+
+  [[nodiscard]] std::size_t EdgeSize(const std::string& name) const {
+    return Edges(name).size();
+  }
+
+  [[nodiscard]] std::size_t InEdgeSize(const std::string& name) const {
+    return InEdges(name).size();
+  }
+
+  [[nodiscard]] std::size_t OutEdgeSize(const std::string& name) const {
+    return OutEdges(name).size();
+  }
+
+  virtual
+      std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
+                         std::function<bool(const NodePtr&, const NodePtr&)>>
+  Children(const std::string& name) const {
     decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
 
     // Add child nodes
-    const auto out_edges = OutEdges(n);
+    const auto out_edges = DiGraph<Node, Edge>::OutEdges(name);
     for (const auto& i : out_edges) {
       res.insert(i->Target());
     }
@@ -197,11 +204,14 @@ class DiGraph {
     return res;
   }
 
-  auto Parents(const std::string& n) const {
+  virtual
+      std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
+                         std::function<bool(const NodePtr&, const NodePtr&)>>
+      Parents(const std::string& name) const {
     decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
 
     // Add parent nodes
-    const auto in_edges = InEdges(n);
+    const auto in_edges = DiGraph<Node, Edge>::InEdges(name);
     for (const auto& i : in_edges) {
       res.insert(i->Source());
     }
@@ -209,9 +219,9 @@ class DiGraph {
     return res;
   }
 
-  auto Neighbors(const std::string& n) const {
-    auto res = Children(n);
-    res.merge(Parents(n));
+  auto Neighbors(const std::string& name) const {
+    auto res = DiGraph<Node, Edge>::Children(name);
+    res.merge(DiGraph<Node, Edge>::Parents(name));
 
     return res;
   }
@@ -238,11 +248,36 @@ class DiGraph {
 template <NodeType Node = MyNode, EdgeType Edge = MyEdge<Node>>
 class Graph : public DiGraph<Node, Edge> {
   using NodePtr = std::shared_ptr<Node>;
+  using EdgePtr = std::shared_ptr<Edge>;
 
  public:
   Graph()
       : DiGraph<Node, Edge>(utils::NodeHash<Node>, utils::NodeEqual<Node>,
                             utils::EdgeHash<Edge>, utils::EdgeEqual<Edge>) {}
+
+  std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
+      std::function<bool(const EdgePtr&, const EdgePtr&)>>
+  InEdges(const std::string& n) const override {
+    return DiGraph<Node, Edge>::Edges(n);
+  }
+
+  std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
+      std::function<bool(const EdgePtr&, const EdgePtr&)>>
+  OutEdges(const std::string& n) const override {
+    return DiGraph<Node, Edge>::Edges(n);
+  }
+
+  std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
+                     std::function<bool(const NodePtr&, const NodePtr&)>>
+  Children(const std::string& n) const override {
+    return DiGraph<Node, Edge>::Neighbors(n);
+  }
+
+  std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
+                     std::function<bool(const NodePtr&, const NodePtr&)>>
+  Parents(const std::string& n) const override {
+    return DiGraph<Node, Edge>::Neighbors(n);
+  }
 };
 
 }  // namespace xgraph

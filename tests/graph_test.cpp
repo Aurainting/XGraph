@@ -25,11 +25,11 @@ void digraph_test(const int n = 10) {
   graph->AddEdge(s_node, t_node, 2);
 
   for (int i = 0; i < n; ++i) {
-    for (int j = i + 1; j < n; ++j) {
+    for (int j = 0; j < n; ++j) {
       graph->AddEdge(std::to_string(i), std::to_string(j));
     }
   }
-  assert(graph->EdgeSize() == n * (n-1) / 2 + 1);
+  assert(graph->EdgeSize() == n * (n-1) + 1);
 
   // Node tests
   assert(graph->HasNode("source"));
@@ -56,8 +56,8 @@ void digraph_test(const int n = 10) {
   assert(graph->Nodes().contains(some_edge_test->Source()));
   assert(graph->Nodes().contains(some_edge_test->Target()));
 
-  assert(graph->EdgeSize("0") == n - 1);
-  assert(graph->InEdgeSize("0") == 0);
+  assert(graph->EdgeSize("0") == 2 * (n - 1));
+  assert(graph->InEdgeSize("0") == n - 1);
   assert(graph->OutEdgeSize("0") == n - 1);
 
   assert(graph->OutEdges("0").contains(some_edge_test));
@@ -124,14 +124,18 @@ void graph_test(const int n = 10) {
   assert(graph->Nodes().contains(some_edge_test->Target()));
 
   assert(graph->EdgeSize("0") == n - 1);
-  assert(graph->InEdgeSize("0") == 0);
+  assert(graph->InEdgeSize("0") == n - 1);
   assert(graph->OutEdgeSize("0") == n - 1);
 
   assert(graph->OutEdges("0").contains(some_edge_test));
 
   assert(graph->Children("source").contains(t_node));
+  assert(graph->Children("0").size() == n - 1);
+
+  assert(graph->Parents("0").size() == n - 1);
 
   assert(graph->Neighbors("target").contains(s_node));
+  assert(graph->Neighbors("0").size() == n - 1);
 
   std::cout << "Graph with " << n << " nodes test succeed!" << std::endl;
 }
