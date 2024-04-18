@@ -1,7 +1,9 @@
 #pragma once
 
 #include <numeric>
+#include <cmath>
 #include <queue>
+#include <random>
 #include <vector>
 
 #include "../structure/graph.hpp"
@@ -46,8 +48,8 @@ void dijkstra(const DiGraph<Node, Edge>& graph,
     return distance[lhs->Id()] > distance[rhs->Id()];
   };
   auto current_node = std::priority_queue<std::shared_ptr<Node>,
-                                          std::vector<std::shared_ptr<Node>>,
-                                          decltype(node_comp)>(node_comp);
+      std::vector<std::shared_ptr<Node>>,
+      decltype(node_comp)>(node_comp);
 
   current_node.emplace(source);
 
@@ -102,7 +104,41 @@ template <NodeType Node, EdgeType Edge>
 void dijkstra(const Graph<Node, Edge>& graph,
               const std::shared_ptr<Node>& source,
               const std::shared_ptr<Node>& target,
-              std::vector<std::weak_ptr<Edge>>& res) {}
+              std::vector<std::weak_ptr<Edge>>& res) {
+  const auto n = graph.NodeSize();
+  const auto m = graph.EdgeSize();
+
+  const double k = std::sqrt(std::log2(static_cast<double>(n))
+                             / std::log2(std::log2(static_cast<double>(n))));
+
+  std::random_device rd;
+  std::default_random_engine gen(rd());
+
+  // Improved Bundle Construction
+  std::unordered_set<std::shared_ptr<Node>> R1;
+  std::unordered_set<std::shared_ptr<Node>> tmp_R;
+
+  // Step 1
+  for (const auto& i : graph.Nodes()) {
+    if (i == source) {
+      R1.insert(i);
+    } else {
+      if (std::generate_canonical<double, 32>(gen) < 1 / k) {
+        R1.insert(i);
+      } else {
+        tmp_R.insert(i);
+      }
+    }
+  }
+
+  // Step 2
+  bool in_R1 {false};
+  bool already_popped {false};
+  for (const auto& i : tmp_R) {
+
+  }
+
+}
 
 template <NodeType Node, EdgeType Edge>
 void bellman_ford(const DiGraph<Node, Edge>& graph,
