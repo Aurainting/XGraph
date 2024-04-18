@@ -1,7 +1,7 @@
 #pragma once
 
-#include <numeric>
 #include <cmath>
+#include <numeric>
 #include <queue>
 #include <random>
 #include <vector>
@@ -18,14 +18,14 @@ enum class SPMethod {
 namespace impl {
 
 /*!
- * @brief 
- * 
- * @tparam Node 
- * @tparam Edge 
- * @param graph 
- * @param source 
- * @param target 
- * @param res 
+ * @brief
+ *
+ * @tparam Node
+ * @tparam Edge
+ * @param graph
+ * @param source
+ * @param target
+ * @param res
  */
 template <NodeType Node, EdgeType Edge>
 void dijkstra(const DiGraph<Node, Edge>& graph,
@@ -48,8 +48,8 @@ void dijkstra(const DiGraph<Node, Edge>& graph,
     return distance[lhs->Id()] > distance[rhs->Id()];
   };
   auto current_node = std::priority_queue<std::shared_ptr<Node>,
-      std::vector<std::shared_ptr<Node>>,
-      decltype(node_comp)>(node_comp);
+                                          std::vector<std::shared_ptr<Node>>,
+                                          decltype(node_comp)>(node_comp);
 
   current_node.emplace(source);
 
@@ -89,16 +89,17 @@ void dijkstra(const DiGraph<Node, Edge>& graph,
 }
 
 /*!
- * @brief 
+ * @brief
  *
- * @cite A Randomized Algorithm for Single-Source Shortest Path on Undirected Real-Weighted Graphs (https://doi.org/10.1109/FOCS57990.2023.00035)
- * 
- * @tparam Node 
- * @tparam Edge 
- * @param graph 
- * @param source 
- * @param target 
- * @param res 
+ * @cite A Randomized Algorithm for Single-Source Shortest Path on Undirected
+ * Real-Weighted Graphs (https://doi.org/10.1109/FOCS57990.2023.00035)
+ *
+ * @tparam Node
+ * @tparam Edge
+ * @param graph
+ * @param source
+ * @param target
+ * @param res
  */
 template <NodeType Node, EdgeType Edge>
 void dijkstra(const Graph<Node, Edge>& graph,
@@ -108,8 +109,8 @@ void dijkstra(const Graph<Node, Edge>& graph,
   const auto n = graph.NodeSize();
   const auto m = graph.EdgeSize();
 
-  const double k = std::sqrt(std::log2(static_cast<double>(n))
-                             / std::log2(std::log2(static_cast<double>(n))));
+  const double k = std::sqrt(std::log2(static_cast<double>(n)) /
+                             std::log2(std::log2(static_cast<double>(n))));
 
   std::random_device rd;
   std::default_random_engine gen(rd());
@@ -132,12 +133,10 @@ void dijkstra(const Graph<Node, Edge>& graph,
   }
 
   // Step 2
-  bool in_R1 {false};
-  bool already_popped {false};
+  bool in_R1{false};
+  bool already_popped{false};
   for (const auto& i : tmp_R) {
-
   }
-
 }
 
 template <NodeType Node, EdgeType Edge>

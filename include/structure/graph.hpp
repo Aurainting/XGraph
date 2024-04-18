@@ -82,8 +82,7 @@ class DiGraph {
     AddNode(std::make_shared<Node>(name));
   }
 
-  void AddEdge(const NodePtr& s, const NodePtr& t,
-               const double w = 1.0) {
+  void AddEdge(const NodePtr& s, const NodePtr& t, const double w = 1.0) {
     const auto s_node_ptr = *(_nodes.insert(s).first);
     const auto t_node_ptr = *(_nodes.insert(t).first);
 
@@ -91,13 +90,16 @@ class DiGraph {
       return;
     }
 
-    const auto edge_ptr = *(_edges.insert(std::make_shared<Edge>(s_node_ptr, t_node_ptr, w)).first);
+    const auto edge_ptr = *(
+        _edges.insert(std::make_shared<Edge>(s_node_ptr, t_node_ptr, w)).first);
 
     // Ensure the validity of the weak pointer.
-    _adjacent[edge_ptr->Source()->Id()][edge_ptr->Target()->Id()] = std::weak_ptr<Edge>(edge_ptr);
+    _adjacent[edge_ptr->Source()->Id()][edge_ptr->Target()->Id()] =
+        std::weak_ptr<Edge>(edge_ptr);
   }
 
-  void AddEdge(const std::string& s_name, const std::string& t_name, const double w = 1.0) {
+  void AddEdge(const std::string& s_name, const std::string& t_name,
+               const double w = 1.0) {
     AddEdge(std::make_shared<Node>(s_name), std::make_shared<Node>(t_name), w);
   }
 
@@ -108,17 +110,21 @@ class DiGraph {
     return nullptr;
   }
 
-  [[nodiscard]] bool HasNode(const std::string& name) const { return GetNode(name) != nullptr; }
+  [[nodiscard]] bool HasNode(const std::string& name) const {
+    return GetNode(name) != nullptr;
+  }
 
   auto Nodes() const { return _nodes; }
 
   [[nodiscard]] std::size_t NodeSize() const { return Nodes().size(); }
 
-  EdgePtr GetEdge(const std::string& s_name, const std::string& t_name, const double w = 1.0) const {
+  EdgePtr GetEdge(const std::string& s_name, const std::string& t_name,
+                  const double w = 1.0) const {
     const auto s_node = GetNode(s_name);
     const auto t_node = GetNode(t_name);
     if (s_node && t_node) {
-      if (const auto res = _edges.find(std::make_shared<Edge>(s_node, t_node, w));
+      if (const auto res =
+              _edges.find(std::make_shared<Edge>(s_node, t_node, w));
           res != _edges.end()) {
         return *res;
       }
@@ -126,7 +132,9 @@ class DiGraph {
     return nullptr;
   }
 
-  [[nodiscard]] bool HasEdge(const std::string& s_name, const std::string& t_name, const double w = 1.0) const {
+  [[nodiscard]] bool HasEdge(const std::string& s_name,
+                             const std::string& t_name,
+                             const double w = 1.0) const {
     return GetEdge(s_name, t_name, w) != nullptr;
   }
 
@@ -139,10 +147,10 @@ class DiGraph {
     return res;
   }
 
-  virtual
-      std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
-                         std::function<bool(const EdgePtr&, const EdgePtr&)>>
-      InEdges(const std::string& name) const {
+  virtual std::unordered_set<
+      EdgePtr, std::function<std::size_t(const EdgePtr&)>,
+      std::function<bool(const EdgePtr&, const EdgePtr&)>>
+  InEdges(const std::string& name) const {
     decltype(_edges) res(1, _edges.hash_function(), _edges.key_eq());
 
     if (const auto node = GetNode(name)) {
@@ -157,10 +165,10 @@ class DiGraph {
     return res;
   }
 
-  virtual
-      std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
-                         std::function<bool(const EdgePtr&, const EdgePtr&)>>
-      OutEdges(const std::string& name) const {
+  virtual std::unordered_set<
+      EdgePtr, std::function<std::size_t(const EdgePtr&)>,
+      std::function<bool(const EdgePtr&, const EdgePtr&)>>
+  OutEdges(const std::string& name) const {
     decltype(_edges) res(1, _edges.hash_function(), _edges.key_eq());
 
     if (const auto node = GetNode(name)) {
@@ -189,9 +197,9 @@ class DiGraph {
     return OutEdges(name).size();
   }
 
-  virtual
-      std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
-                         std::function<bool(const NodePtr&, const NodePtr&)>>
+  virtual std::unordered_set<
+      NodePtr, std::function<std::size_t(const NodePtr&)>,
+      std::function<bool(const NodePtr&, const NodePtr&)>>
   Children(const std::string& name) const {
     decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
 
@@ -204,10 +212,10 @@ class DiGraph {
     return res;
   }
 
-  virtual
-      std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
-                         std::function<bool(const NodePtr&, const NodePtr&)>>
-      Parents(const std::string& name) const {
+  virtual std::unordered_set<
+      NodePtr, std::function<std::size_t(const NodePtr&)>,
+      std::function<bool(const NodePtr&, const NodePtr&)>>
+  Parents(const std::string& name) const {
     decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
 
     // Add parent nodes
@@ -228,11 +236,11 @@ class DiGraph {
 
  private:
   std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
-      std::function<bool(const NodePtr&, const NodePtr&)>>
+                     std::function<bool(const NodePtr&, const NodePtr&)>>
       _nodes;
 
   std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
-      std::function<bool(const EdgePtr&, const EdgePtr&)>>
+                     std::function<bool(const EdgePtr&, const EdgePtr&)>>
       _edges;
 
   std::unordered_map<std::size_t, NodeAdj> _adjacent;
@@ -256,13 +264,13 @@ class Graph : public DiGraph<Node, Edge> {
                             utils::EdgeHash<Edge>, utils::EdgeEqual<Edge>) {}
 
   std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
-      std::function<bool(const EdgePtr&, const EdgePtr&)>>
+                     std::function<bool(const EdgePtr&, const EdgePtr&)>>
   InEdges(const std::string& n) const override {
     return DiGraph<Node, Edge>::Edges(n);
   }
 
   std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
-      std::function<bool(const EdgePtr&, const EdgePtr&)>>
+                     std::function<bool(const EdgePtr&, const EdgePtr&)>>
   OutEdges(const std::string& n) const override {
     return DiGraph<Node, Edge>::Edges(n);
   }

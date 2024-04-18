@@ -29,7 +29,7 @@ void digraph_test(const int n = 10) {
       graph->AddEdge(std::to_string(i), std::to_string(j));
     }
   }
-  assert(graph->EdgeSize() == n * (n-1) + 1);
+  assert(graph->EdgeSize() == n * (n - 1) + 1);
 
   // Node tests
   assert(graph->HasNode("source"));
@@ -38,7 +38,8 @@ void digraph_test(const int n = 10) {
   const auto s_node_test = graph->GetNode("source");
   assert(*s_node == *s_node_test);
 
-  const auto some_node_test = graph->GetNode(std::to_string(static_cast<int>(n / 2)));
+  const auto some_node_test =
+      graph->GetNode(std::to_string(static_cast<int>(n / 2)));
   assert(graph->Nodes().contains(some_node_test));
 
   // Edge tests
@@ -49,7 +50,8 @@ void digraph_test(const int n = 10) {
   assert(graph->HasEdge("0", std::to_string(static_cast<int>(n / 2))));
 
   const auto s_t_edge_test = graph->GetEdge("source", "target", 2);
-  const auto some_edge_test = graph->GetEdge("0", std::to_string(static_cast<int>(n / 2)));
+  const auto some_edge_test =
+      graph->GetEdge("0", std::to_string(static_cast<int>(n / 2)));
 
   assert(graph->Edges().contains(s_t_edge_test));
   assert(graph->Edges().contains(some_edge_test));
@@ -97,7 +99,7 @@ void graph_test(const int n = 10) {
       graph->AddEdge(std::to_string(i), std::to_string(j));
     }
   }
-  assert(graph->EdgeSize() == n * (n-1) / 2 + 2);
+  assert(graph->EdgeSize() == n * (n - 1) / 2 + 2);
 
   // Node tests
   assert(graph->HasNode("source"));
@@ -106,7 +108,8 @@ void graph_test(const int n = 10) {
   const auto s_node_test = graph->GetNode("source");
   assert(*s_node == *s_node_test);
 
-  const auto some_node_test = graph->GetNode(std::to_string(static_cast<int>(n / 2)));
+  const auto some_node_test =
+      graph->GetNode(std::to_string(static_cast<int>(n / 2)));
   assert(graph->Nodes().contains(some_node_test));
 
   // Edge tests
@@ -116,7 +119,8 @@ void graph_test(const int n = 10) {
   assert(graph->HasEdge("0", std::to_string(static_cast<int>(n / 2))));
 
   const auto s_t_edge_test = graph->GetEdge("source", "target", 2);
-  const auto some_edge_test = graph->GetEdge("0", std::to_string(static_cast<int>(n / 2)));
+  const auto some_edge_test =
+      graph->GetEdge("0", std::to_string(static_cast<int>(n / 2)));
 
   assert(graph->Edges().contains(s_t_edge_test));
   assert(graph->Edges().contains(some_edge_test));
