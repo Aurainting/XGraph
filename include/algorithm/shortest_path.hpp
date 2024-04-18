@@ -136,6 +136,7 @@ void dijkstra(const Graph<Node, Edge>& graph,
   bool in_R1{false};
   bool already_popped{false};
   for (const auto& i : tmp_R) {
+
   }
 }
 
