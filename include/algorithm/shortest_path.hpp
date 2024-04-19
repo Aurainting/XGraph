@@ -138,6 +138,50 @@ void randomized_sssp(const Graph<Node, Edge>& graph,
   bool in_R1{false};
   bool already_popped{false};
   for (const auto& i : tmp_R) {
+    // Run Dijkstra
+    std::unordered_map<std::size_t, bool> visited;
+    std::unordered_map<std::size_t, double> distance;
+
+    for (const auto& v : graph.Nodes()) {
+      distance[v->Id()] = std::numeric_limits<double>::infinity();
+    }
+
+    distance[i->Id()] = 0;
+
+    const auto node_comp = [&distance](const std::shared_ptr<Node>& lhs,
+                                       const std::shared_ptr<Node>& rhs) {
+      return distance[lhs->Id()] > distance[rhs->Id()];
+    };
+    auto current_node = std::priority_queue<std::shared_ptr<Node>,
+                                            std::vector<std::shared_ptr<Node>>,
+                                            decltype(node_comp)>(node_comp);
+
+    current_node.emplace(i);
+
+    std::size_t pop_cnt {0};
+    while (!current_node.empty()) {
+      const auto n = current_node.top();
+      current_node.pop();
+      ++pop_cnt;
+
+      if (visited[n->Id()]) {
+        continue;
+      }
+      visited[n->Id()] = true;
+
+      // Stop criteria 1
+      if (R1.contains(n)) {
+        in_R1 = true;
+        break;
+      }
+
+      // Stop criteria 2
+      if (pop_cnt >= k * std::log2(k)) {
+        already_popped = true;
+        break;
+      }
+
+    }
   }
 }
 
