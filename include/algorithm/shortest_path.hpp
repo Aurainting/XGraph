@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <numeric>
 #include <queue>
@@ -136,7 +137,6 @@ void dijkstra(const Graph<Node, Edge>& graph,
   bool in_R1{false};
   bool already_popped{false};
   for (const auto& i : tmp_R) {
-
   }
 }
 
@@ -158,7 +158,14 @@ std::vector<std::weak_ptr<Edge>> ShortestPath(
   // Choose method
   switch (method) {
     case SPMethod::Dijkstra:
-      impl::dijkstra(graph, source, target, res);
+      if (std::any_of(
+              graph.Edges().cbegin(), graph.Edges().cend(),
+              [](const auto& edge_ptr) { return edge_ptr->Weight() < 0; })) {
+        // The algorithm deals with negative weight.
+      } else {
+        // Dijkstra algorithm with positive weight.
+        impl::dijkstra(graph, source, target, res);
+      }
       break;
     case SPMethod::Bellman_Ford:
       impl::bellman_ford(graph, source, target, res);
