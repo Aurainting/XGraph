@@ -14,6 +14,7 @@ namespace xgraph::algo {
 enum class SPMethod {
   Dijkstra,
   Bellman_Ford,
+  Auto,
 };
 
 namespace impl {
@@ -103,10 +104,10 @@ void dijkstra(const DiGraph<Node, Edge>& graph,
  * @param res
  */
 template <NodeType Node, EdgeType Edge>
-void dijkstra(const Graph<Node, Edge>& graph,
-              const std::shared_ptr<Node>& source,
-              const std::shared_ptr<Node>& target,
-              std::vector<std::weak_ptr<Edge>>& res) {
+void randomized_sssp(const Graph<Node, Edge>& graph,
+                     const std::shared_ptr<Node>& source,
+                     const std::shared_ptr<Node>& target,
+                     std::vector<std::weak_ptr<Edge>>& res) {
   const auto n = graph.NodeSize();
   const auto m = graph.EdgeSize();
 
@@ -152,23 +153,33 @@ template <NodeType Node, EdgeType Edge>
 std::vector<std::weak_ptr<Edge>> ShortestPath(
     const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& source,
     const std::shared_ptr<Node>& target = nullptr,
-    const SPMethod& method = SPMethod::Dijkstra) {
+    const SPMethod& method = SPMethod::Auto) {
   std::vector<std::weak_ptr<Edge>> res{};
 
   // Choose method
   switch (method) {
     case SPMethod::Dijkstra:
+      impl::dijkstra(graph, source, target, res);
+      break;
+
+    case SPMethod::Bellman_Ford:
+      impl::bellman_ford(graph, source, target, res);
+      break;
+
+    case SPMethod::Auto:
       if (std::any_of(
               graph.Edges().cbegin(), graph.Edges().cend(),
               [](const auto& edge_ptr) { return edge_ptr->Weight() < 0; })) {
-        // The algorithm deals with negative weight.
+        // With negative weight
+        impl::bellman_ford(graph, source, target, res);
       } else {
-        // Dijkstra algorithm with positive weight.
-        impl::dijkstra(graph, source, target, res);
+        // Without negative weight
+        if (graph.IsDirected()) {
+          impl::dijkstra(graph, source, target, res);
+        } else {
+          impl::randomized_sssp(graph, source, target, res);
+        }
       }
-      break;
-    case SPMethod::Bellman_Ford:
-      impl::bellman_ford(graph, source, target, res);
       break;
   }
 

@@ -70,6 +70,8 @@ class DiGraph {
     _node_name.clear();
   }
 
+  virtual bool IsDirected() const { return true; }
+
   void AddNode(const NodePtr& n) {
     const auto result = _nodes.insert(n);
     const auto node_ptr = *(result.first);
@@ -262,6 +264,8 @@ class Graph : public DiGraph<Node, Edge> {
   Graph()
       : DiGraph<Node, Edge>(utils::NodeHash<Node>, utils::NodeEqual<Node>,
                             utils::EdgeHash<Edge>, utils::EdgeEqual<Edge>) {}
+
+  bool IsDirected() const override { return false; }
 
   std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
                      std::function<bool(const EdgePtr&, const EdgePtr&)>>
