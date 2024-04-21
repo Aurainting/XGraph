@@ -7,5 +7,7 @@ int main() {
 
   xgraph::test::graph_test();
 
+  xgraph::test::shortest_path_test();
+
   std::cout << "Test Done!" << std::endl;
 }
