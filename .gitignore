@@ -6,3 +6,6 @@ build/
 # CLion
 .idea/
 cmake-build-*
+
+# Benchmark (LDBC)
+benchmark/
