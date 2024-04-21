@@ -3,6 +3,8 @@
 
 #include "../include/xgraph.hpp"
 
+namespace xgraph::test {
+
 void digraph_test(const int n = 10) {
   using xgraph::MyEdge;
   using xgraph::MyNode;
@@ -143,11 +145,4 @@ void graph_test(const int n = 10) {
 
   std::cout << "Graph with " << n << " nodes test succeed!" << std::endl;
 }
-
-int main() {
-  digraph_test();
-
-  graph_test();
-
-  std::cout << "Test Done!" << std::endl;
 }
