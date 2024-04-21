@@ -14,6 +14,7 @@ namespace xgraph::algo {
 enum class SPMethod {
   Dijkstra,
   Bellman_Ford,
+  Random,
   Auto,
 };
 
@@ -208,6 +209,10 @@ std::vector<std::weak_ptr<Edge>> ShortestPath(
 
     case SPMethod::Bellman_Ford:
       impl::bellman_ford(graph, source, target, res);
+      break;
+
+    case SPMethod::Random:
+      impl::randomized_sssp(graph, source, target, res);
       break;
 
     case SPMethod::Auto:
