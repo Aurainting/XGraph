@@ -1,5 +1,4 @@
-#include "graph_test.hpp"
-
+#include "structure_test.hpp"
 
 int main() {
   xgraph::test::digraph_test();
