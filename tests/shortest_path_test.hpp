@@ -9,7 +9,8 @@
 namespace xgraph::test {
 
 void shortest_path_test () {
-  auto graph = load_benchmark("../../benchmark/test-sssp-directed");
+  // auto graph = load_benchmark("../../benchmark/test-sssp-directed");
+  auto graph = load_benchmark("../../benchmark/wiki-Talk");
 
 }
 
