@@ -1,4 +1,6 @@
 #include "structure_test.hpp"
+#include "shortest_path_test.hpp"
+
 
 int main() {
   xgraph::test::digraph_test();
