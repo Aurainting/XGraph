@@ -2,8 +2,8 @@
 
 cd .. && mkdir benchmark
 
-if [-d "../benchmark" ]; then
-  cd ../benchmark
+if [ -d "../benchmark" ]; then
+  cd ../benchmark || exit
   wget https://pub-383410a98aef4cb686f0c7601eddd25f.r2.dev/graphalytics/wiki-Talk.tar.zst
   wget https://pub-383410a98aef4cb686f0c7601eddd25f.r2.dev/graphalytics/dota-league.tar.zst
   wget https://pub-383410a98aef4cb686f0c7601eddd25f.r2.dev/graphalytics/test-bfs-directed.tar.zst
