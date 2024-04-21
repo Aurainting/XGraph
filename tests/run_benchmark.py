@@ -2,6 +2,7 @@ import os
 import time
 import networkx as nx
 
+
 def run_benchmark(dir_path: str) -> None:
     """
     Run benchmark by NetworkX
@@ -29,7 +30,7 @@ def run_benchmark(dir_path: str) -> None:
         end_t = time.time()
         node_load_t += end_t - start_t
 
-    print(f'Node load time: {node_load_t}')
+    print(f'Node load time: {node_load_t}s')
 
     # Add edges
     with open(f'{dir_path}/{file_name}.e', 'r', encoding='utf-8') as f:
@@ -48,7 +49,7 @@ def run_benchmark(dir_path: str) -> None:
         end_t = time.time()
         edge_load_t += end_t - start_t
 
-    print(f'Edge load time: {edge_load_t}')
+    print(f'Edge load time: {edge_load_t}s')
 
 
 if __name__ == '__main__':
