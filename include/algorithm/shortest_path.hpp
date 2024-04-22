@@ -190,7 +190,32 @@ template <NodeType Node, EdgeType Edge>
 void bellman_ford(const DiGraph<Node, Edge>& graph,
                   const std::shared_ptr<Node>& source,
                   const std::shared_ptr<Node>& target,
-                  std::vector<std::weak_ptr<Edge>>& res) {}
+                  std::vector<std::weak_ptr<Edge>>& res) {
+  std::unordered_map<std::size_t, std::shared_ptr<Edge>> previous;
+  std::unordered_map<std::size_t, double> distance;
+
+  for (const auto& n : graph.Nodes()) {
+    distance[n->Id()] = std::numeric_limits<double>::infinity();
+  }
+  distance[source->Id()] = 0;
+
+  for (std::size_t i = 0; i < graph.NodeSize(); ++i) {
+    bool flag {false};
+    for (const auto& e : graph.Edges()) {
+      if (distance[e->Source()->Id()] == std::numeric_limits<double>::infinity()) {
+        continue;
+      }
+      if (distance[e->Target()->Id()] > distance[e->Source()->Id()] + e->Weight()) {
+        flag = true;
+        distance[e->Target()->Id()] = distance[e->Source()->Id()] + e->Weight();
+        previous[e->Target()->Id()] = e;
+      }
+    }
+    if (!flag) {
+      break;
+    }
+  }
+}
 
 }  // namespace impl
 
