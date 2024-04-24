@@ -2,15 +2,14 @@
 
 #include <iostream>
 #include <sstream>
-#include <vector>
 #include <string>
-
+#include <vector>
 
 namespace xgraph::utils {
 std::vector<std::string> splitString(const std::string& str, char delimiter) {
-  std::vector<std::string> tokens {};
+  std::vector<std::string> tokens{};
   std::stringstream ss(str);
-  std::string token {};
+  std::string token{};
 
   while (std::getline(ss, token, delimiter)) {
     tokens.push_back(token);
@@ -18,4 +17,4 @@ std::vector<std::string> splitString(const std::string& str, char delimiter) {
 
   return tokens;
 }
-}
+}  // namespace xgraph::utils

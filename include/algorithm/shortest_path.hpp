@@ -159,7 +159,7 @@ void randomized_sssp(const Graph<Node, Edge>& graph,
 
     current_node.emplace(i);
 
-    std::size_t pop_cnt {0};
+    std::size_t pop_cnt{0};
     while (!current_node.empty()) {
       const auto n = current_node.top();
       current_node.pop();
@@ -181,7 +181,6 @@ void randomized_sssp(const Graph<Node, Edge>& graph,
         already_popped = true;
         break;
       }
-
     }
   }
 }
@@ -200,12 +199,14 @@ void bellman_ford(const DiGraph<Node, Edge>& graph,
   distance[source->Id()] = 0;
 
   for (std::size_t i = 0; i < graph.NodeSize(); ++i) {
-    bool flag {false};
+    bool flag{false};
     for (const auto& e : graph.Edges()) {
-      if (distance[e->Source()->Id()] == std::numeric_limits<double>::infinity()) {
+      if (distance[e->Source()->Id()] ==
+          std::numeric_limits<double>::infinity()) {
         continue;
       }
-      if (distance[e->Target()->Id()] > distance[e->Source()->Id()] + e->Weight()) {
+      if (distance[e->Target()->Id()] >
+          distance[e->Source()->Id()] + e->Weight()) {
         flag = true;
         distance[e->Target()->Id()] = distance[e->Source()->Id()] + e->Weight();
         previous[e->Target()->Id()] = e;
