@@ -120,7 +120,8 @@ void randomized_sssp(const Graph<Node, Edge>& graph,
 
   // Improved Bundle Construction
   std::unordered_set<std::shared_ptr<Node>> R1;
-  std::unordered_set<std::shared_ptr<Node>> tmp_R;
+  std::unordered_set<std::shared_ptr<Node>> not_R1;
+  std::unordered_set<std::shared_ptr<Node>> R2;
 
   // Step 1
   for (const auto& i : graph.Nodes()) {
@@ -130,15 +131,16 @@ void randomized_sssp(const Graph<Node, Edge>& graph,
       if (std::generate_canonical<double, 32>(gen) < 1 / k) {
         R1.insert(i);
       } else {
-        tmp_R.insert(i);
+        not_R1.insert(i);
       }
     }
   }
 
   // Step 2
   bool in_R1{false};
-  bool already_popped{false};
-  for (const auto& i : tmp_R) {
+  std::unordered_map<std::size_t, std::vector<std::shared_ptr<Node>>> v_extract {};
+
+  for (const auto& i : not_R1) {
     // Run Dijkstra
     std::unordered_map<std::size_t, bool> visited;
     std::unordered_map<std::size_t, double> distance;
@@ -159,11 +161,9 @@ void randomized_sssp(const Graph<Node, Edge>& graph,
 
     current_node.emplace(i);
 
-    std::size_t pop_cnt{0};
     while (!current_node.empty()) {
       const auto n = current_node.top();
       current_node.pop();
-      ++pop_cnt;
 
       if (visited[n->Id()]) {
         continue;
@@ -176,13 +176,21 @@ void randomized_sssp(const Graph<Node, Edge>& graph,
         break;
       }
 
+      // Step 3_1
+      v_extract[n->Id()].emplace_back(n);
+
       // Stop criteria 2
-      if (pop_cnt >= k * std::log2(k)) {
-        already_popped = true;
+      if (v_extract[n->Id()].size() >= k * std::log2(k)) {
+        // Step 3_2
+        R2.insert(i);
         break;
       }
     }
   }
+
+  // Step 4
+  R1.merge(R2);  // R = R1
+
 }
 
 template <NodeType Node, EdgeType Edge>
