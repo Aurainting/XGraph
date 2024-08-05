@@ -6,12 +6,12 @@
 
 #include "../structure/graph.hpp"
 
-namespace xgraph::algo {
+namespace xgraph::algorithm {
 
 template <NodeType Node, EdgeType Edge>
 void BFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
          const std::function<void(const std::shared_ptr<Node>&)>& func =
-             std::identity{}) {
+         std::identity{}) {
   std::queue<std::shared_ptr<Node>> q;
   std::unordered_map<std::size_t, bool> visited;
 
@@ -41,7 +41,7 @@ void BFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
 template <NodeType Node, EdgeType Edge>
 void DFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
          const std::function<void(const std::shared_ptr<Node>&)>& func =
-             std::identity{}) {
+         std::identity{}) {
   std::stack<std::shared_ptr<Node>> s;
   std::unordered_map<std::size_t, bool> visited;
 
@@ -68,4 +68,4 @@ void DFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
   }
 }
 
-}  // namespace xgraph::algo
+}  // namespace xgraph::algorithm
