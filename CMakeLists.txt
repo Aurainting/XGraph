@@ -7,3 +7,5 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 
 # Add subdirectory for the tests directory
 add_subdirectory(tests)
+
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/include/")

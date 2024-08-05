@@ -16,6 +16,8 @@ void show_tikz(const DiGraph<Node, Edge>& graph, const std::string& file_path) {
     std::cerr << "Can not open file: " << file_path << std::endl;
     return;
   }
+
+  // TODO: output tikz file to show graph
 }
 
 }  // namespace xgraph::visual
