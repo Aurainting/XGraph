@@ -1,15 +1,10 @@
 #include <chrono>
-#include <iostream>
-#include <fstream>
 #include <string>
 
 #include <gtest/gtest.h>
 
 #include "../include/xgraph.hpp"
-#include "../include/utils/file_utils.hpp"
 
-
-namespace xgraph::test {
 
 TEST(TestGraphStructure, DiGraph) {
   using xgraph::MyEdge;
@@ -153,6 +148,4 @@ TEST(TestGraphStructure, Graph) {
 
   EXPECT_TRUE(graph->Neighbors("target").contains(s_node));
   EXPECT_EQ(graph->Neighbors("0").size(), n - 1);
-}
-
 }
