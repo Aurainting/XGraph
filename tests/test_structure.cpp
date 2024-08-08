@@ -13,6 +13,7 @@ TEST(TestGraphStructure, DiGraph) {
   const int n = 10;
 
   auto graph = std::make_shared<xgraph::DiGraph<>>();
+  EXPECT_TRUE(graph->IsDirected());
 
   // Add nodes
   const auto s_node = std::make_shared<MyNode>("source");
@@ -87,6 +88,7 @@ TEST(TestGraphStructure, Graph) {
   const int n = 10;
 
   auto graph = std::make_shared<xgraph::Graph<>>();
+  EXPECT_FALSE(graph->IsDirected());
 
   // Add nodes
   const auto s_node = std::make_shared<MyNode>("source");
