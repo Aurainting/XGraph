@@ -74,6 +74,9 @@ TEST(TestGraphStructure, DiGraph) {
 
   EXPECT_TRUE(graph->Children("source").contains(t_node));
 
+  EXPECT_TRUE(graph->Predecessor("target").contains(s_node));
+  EXPECT_TRUE(graph->Successor("0").contains(some_node_test));
+
   EXPECT_TRUE(graph->Neighbors("target").contains(s_node));
 }
 
@@ -145,6 +148,9 @@ TEST(TestGraphStructure, Graph) {
   EXPECT_EQ(graph->Children("0").size(), n - 1);
 
   EXPECT_EQ(graph->Parents("0").size(), n - 1);
+
+  EXPECT_TRUE(graph->Predecessor("target").contains(s_node));
+  EXPECT_TRUE(graph->Successor("0").contains(some_node_test));
 
   EXPECT_TRUE(graph->Neighbors("target").contains(s_node));
   EXPECT_EQ(graph->Neighbors("0").size(), n - 1);

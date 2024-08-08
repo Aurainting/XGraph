@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <queue>
 
 #include "edge.hpp"
 #include "node.hpp"
@@ -126,7 +127,7 @@ class DiGraph {
     const auto t_node = GetNode(t_name);
     if (s_node && t_node) {
       if (const auto res =
-              _edges.find(std::make_shared<Edge>(s_node, t_node, w));
+            _edges.find(std::make_shared<Edge>(s_node, t_node, w));
           res != _edges.end()) {
         return *res;
       }
@@ -229,6 +230,74 @@ class DiGraph {
     return res;
   }
 
+  virtual std::unordered_set<
+      NodePtr, std::function<std::size_t(const NodePtr&)>,
+      std::function<bool(const NodePtr&, const NodePtr&)>>
+  Predecessor(const std::string& name) const {
+    decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
+
+    // Initialize the queue
+    auto first_parents = DiGraph<Node, Edge>::Parents(name);
+
+    std::queue<NodePtr> q(first_parents.cbegin(), first_parents.cend());
+    res.merge(first_parents);
+
+    // Add predecessor in a FIFO manner
+    while (!q.empty()) {
+      const auto n = q.front();
+      auto n_parents = DiGraph<Node, Edge>::Parents(n->Name());
+
+      for (auto& p : n_parents) {
+        if (!res.contains(p)) {
+          q.push(p);
+        }
+      }
+      res.merge(n_parents);
+
+      q.pop();
+    }
+
+    return res;
+  }
+
+  virtual
+  std::unordered_set<
+      NodePtr, std::function<std::size_t(const NodePtr&)>,
+      std::function<bool(const NodePtr&, const NodePtr&)>>
+  Successor(const std::string& name) const {
+    decltype(_nodes) res(1, _nodes.hash_function(), _nodes.key_eq());
+
+    // Initialize the queue
+    auto first_children = DiGraph<Node, Edge>::Children(name);
+
+    std::queue<NodePtr> q(first_children.cbegin(), first_children.cend());
+    res.merge(first_children);
+
+    // Add successor in a FIFO manner
+    while (!q.empty()) {
+      const auto n = q.front();
+      auto n_children = DiGraph<Node, Edge>::Children(n->Name());
+
+      for (auto& p : n_children) {
+        if (!res.contains(p)) {
+          q.push(p);
+        }
+      }
+      res.merge(n_children);
+
+      q.pop();
+    }
+
+    return res;
+  }
+
+  auto LinkNodes(const std::string& name) const {
+    auto res = DiGraph<Node, Edge>::Predecessor(name);
+    res.merge(DiGraph<Node, Edge>::Successor(name));
+
+    return res;
+  }
+
   auto Neighbors(const std::string& name) const {
     auto res = DiGraph<Node, Edge>::Children(name);
     res.merge(DiGraph<Node, Edge>::Parents(name));
@@ -238,11 +307,11 @@ class DiGraph {
 
  private:
   std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
-                     std::function<bool(const NodePtr&, const NodePtr&)>>
+      std::function<bool(const NodePtr&, const NodePtr&)>>
       _nodes;
 
   std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
-                     std::function<bool(const EdgePtr&, const EdgePtr&)>>
+      std::function<bool(const EdgePtr&, const EdgePtr&)>>
       _edges;
 
   std::unordered_map<std::size_t, NodeAdj> _adjacent;
@@ -268,27 +337,39 @@ class Graph : public DiGraph<Node, Edge> {
   [[nodiscard]] bool IsDirected() const override { return false; }
 
   std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
-                     std::function<bool(const EdgePtr&, const EdgePtr&)>>
+      std::function<bool(const EdgePtr&, const EdgePtr&)>>
   InEdges(const std::string& n) const override {
     return DiGraph<Node, Edge>::Edges(n);
   }
 
   std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
-                     std::function<bool(const EdgePtr&, const EdgePtr&)>>
+      std::function<bool(const EdgePtr&, const EdgePtr&)>>
   OutEdges(const std::string& n) const override {
     return DiGraph<Node, Edge>::Edges(n);
   }
 
   std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
-                     std::function<bool(const NodePtr&, const NodePtr&)>>
+      std::function<bool(const NodePtr&, const NodePtr&)>>
   Children(const std::string& n) const override {
     return DiGraph<Node, Edge>::Neighbors(n);
   }
 
   std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
-                     std::function<bool(const NodePtr&, const NodePtr&)>>
+      std::function<bool(const NodePtr&, const NodePtr&)>>
   Parents(const std::string& n) const override {
     return DiGraph<Node, Edge>::Neighbors(n);
+  }
+
+  std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
+      std::function<bool(const NodePtr&, const NodePtr&)>>
+  Predecessor(const std::string& n) const override {
+    return DiGraph<Node, Edge>::LinkNodes(n);
+  }
+
+  std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
+      std::function<bool(const NodePtr&, const NodePtr&)>>
+  Successor(const std::string& n) const override {
+    return DiGraph<Node, Edge>::LinkNodes(n);
   }
 };
 
