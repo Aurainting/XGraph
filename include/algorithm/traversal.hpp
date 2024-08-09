@@ -15,7 +15,7 @@ void BFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
   std::queue<std::shared_ptr<Node>> q;
   std::unordered_map<std::size_t, bool> visited;
 
-  for (const auto& i : graph.Neighbors(start)) {
+  for (const auto& i : graph.Neighbors(start->Name())) {
     q.push(i);
     visited[i->Id()] = false;
   }
@@ -31,7 +31,7 @@ void BFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
     func(n);
     visited[n->Id()] = true;
 
-    for (const auto& i : graph.Neighbors(n)) {
+    for (const auto& i : graph.Neighbors(n->Name())) {
       q.push(i);
       visited.try_emplace(i->Id(), false);
     }
@@ -45,7 +45,7 @@ void DFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
   std::stack<std::shared_ptr<Node>> s;
   std::unordered_map<std::size_t, bool> visited;
 
-  for (const auto& i : graph.Neighbors(start)) {
+  for (const auto& i : graph.Neighbors(start->Name())) {
     s.push(i);
     visited[i->Id()] = false;
   }
@@ -61,7 +61,7 @@ void DFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
     func(n);
     visited[n->Id()] = true;
 
-    for (const auto& i : graph.Neighbors(n)) {
+    for (const auto& i : graph.Neighbors(n->Name())) {
       s.push(i);
       visited.try_emplace(i->Id(), false);
     }
