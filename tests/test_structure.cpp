@@ -50,10 +50,25 @@ TEST(TestGraphStructure, DiGraph) {
       graph->GetNode(std::to_string(static_cast<int>(n / 2)));
   EXPECT_TRUE(graph->Nodes().contains(some_node_test));
 
+  graph->RemoveNode("source");  // also edges with it
+  EXPECT_FALSE(graph->HasNode("source"));
+
+  graph->AddNode(s_node);
+  EXPECT_TRUE(graph->HasNode("source"));
+
   // Edge tests
+  EXPECT_FALSE(graph->HasEdge("source", "target", 2));
+
+  graph->AddEdge(s_node, t_node, 2);
   EXPECT_FALSE(graph->HasEdge("source", "target"));
   EXPECT_TRUE(graph->HasEdge("source", "target", 2));
   EXPECT_FALSE(graph->HasEdge("target", "source", 2));
+
+  graph->RemoveEdge("source", "target", 2);
+  EXPECT_FALSE(graph->HasEdge("source", "target", 2));
+
+  graph->AddEdge("source", "target", 2);
+  EXPECT_TRUE(graph->HasEdge("source", "target", 2));
 
   EXPECT_TRUE(graph->HasEdge("0", std::to_string(static_cast<int>(n / 2))));
 
