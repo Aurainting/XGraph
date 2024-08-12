@@ -139,7 +139,20 @@ TEST(TestGraphStructure, Graph) {
       graph->GetNode(std::to_string(static_cast<int>(n / 2)));
   EXPECT_TRUE(graph->Nodes().contains(some_node_test));
 
+  graph->RemoveNode("source");
+  EXPECT_FALSE(graph->HasNode("source"));
+
+  graph->AddNode(s_node);
+  EXPECT_TRUE(graph->HasNode("source"));
+
   // Edge tests
+  EXPECT_FALSE(graph->HasEdge("target", "source", 2));
+  EXPECT_FALSE(graph->HasEdge("target", "source", 1));
+
+  graph->AddEdge(s_node, t_node, 2);
+  graph->AddEdge(t_node, s_node, 2);  // same as above
+  graph->AddEdge(t_node, s_node, 1);  // same nodes with different weight
+
   EXPECT_TRUE(graph->HasEdge("source", "target", 1));
   EXPECT_TRUE(graph->HasEdge("target", "source", 2));
 
