@@ -49,6 +49,7 @@ class DiGraph {
       _nodes.insert(std::make_shared<MyNode>(n->Name()));
     }
 
+    // TODO: below
     // Copy edges
     for (const auto& e : other._edges) {
     }
@@ -85,10 +86,23 @@ class DiGraph {
     AddNode(std::make_shared<Node>(name));
   }
 
+  void RemoveNode(const std::string& name) {
+    // Remove edges
+    for (const auto& e: Edges(name)) {
+      RemoveEdge(e->Source(), e->Target(), e->Weight());
+    }
+
+    // Remove node
+    const auto new_node = std::make_shared<Node>(name);
+    _nodes.erase(new_node);
+    _node_name.erase(name);
+  }
+
   void AddEdge(const NodePtr& s, const NodePtr& t, const double w = 1.0) {
     const auto s_node_ptr = *(_nodes.insert(s).first);
     const auto t_node_ptr = *(_nodes.insert(t).first);
 
+    // We do not support self circle
     if (s_node_ptr == t_node_ptr) {
       return;
     }
@@ -104,6 +118,17 @@ class DiGraph {
   void AddEdge(const std::string& s_name, const std::string& t_name,
                const double w = 1.0) {
     AddEdge(std::make_shared<Node>(s_name), std::make_shared<Node>(t_name), w);
+  }
+
+  void RemoveEdge(const NodePtr& s, const NodePtr& t, const double w = 1.0) {
+    const auto new_edge = std::make_shared<Edge>(s, t, w);
+
+    _edges.erase(new_edge);
+    _adjacent.erase(new_edge->Source()->Id());
+  }
+
+  void RemoveEdge(const std::string& s_name, const std::string& t_name, const double w = 1.0) {
+    RemoveEdge(std::make_shared<Node>(s_name), std::make_shared<Node>(t_name), w);
   }
 
   NodePtr GetNode(const std::string& name) const {
