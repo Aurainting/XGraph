@@ -24,16 +24,7 @@ void show_tikz(const DiGraph<Node, Edge>& graph, const std::string& file_path) {
            << "\\usetikzlibrary{graphs}\n"
            << "\\tikz \\graph {\n";
 
-  // TODO: Draw
-  std::unordered_set<std::string> node_done;
-  for (const auto& n : graph.Nodes()) {
-    xgraph::algorithm::DFS<Node, Edge>(graph, n, [&node_done] (const auto& node_ptr) {
-      if (!node_done.contains(node_ptr->Name())) {
-        std::cout << "Visit: " << node_ptr->Name() << std::endl;
-        node_done.insert(node_ptr->Name());
-      }
-    });
-  }
+  // TODO: format nodes and edges
 
   out_file << "};\n"
               << "\\end{document}\n";
