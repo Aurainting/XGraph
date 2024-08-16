@@ -13,7 +13,7 @@
 
 namespace xgraph {
 /*!
- * Directed Graph
+ * @brief Directed Graph
  * @tparam Node Node class that satisfy `NodeType` concept
  * @tparam Edge Edge class that satisfy `EdgeType` concept
  */
@@ -45,21 +45,13 @@ class DiGraph {
         _adjacent(),
         _node_name() {
     // Copy nodes
-    for (const auto& n : other._nodes) {
-      _nodes.insert(std::make_shared<MyNode>(n->Name()));
+    for (const auto& n : other.Nodes()) {
+      AddNode(n->Name());
     }
 
-    // TODO: below
     // Copy edges
-    for (const auto& e : other._edges) {
-    }
-
-    // Copy adjacent
-    for (const auto& i : other._adjacent) {
-    }
-
-    // Copy node name
-    for (const auto& i : other._node_name) {
+    for (const auto& e : other.Edges()) {
+      AddEdge(e->Source()->Name(), e->Target()->Name(), e->Weight());
     }
   }
 
@@ -345,7 +337,7 @@ class DiGraph {
 };
 
 /*!
- * Undirected Graph
+ * @brief Undirected Graph
  * @tparam Node
  * @tparam Edge
  */

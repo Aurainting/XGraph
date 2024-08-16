@@ -27,7 +27,7 @@ void show_tikz(const DiGraph<Node, Edge>& graph, const std::string& file_path) {
   // TODO: format nodes and edges
 
   out_file << "};\n"
-              << "\\end{document}\n";
+           << "\\end{document}\n";
 }
 
 template <NodeType Node, EdgeType Edge>
