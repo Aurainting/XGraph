@@ -39,6 +39,13 @@ void BFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
 }
 
 template <NodeType Node, EdgeType Edge>
+void BFS(const Graph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
+         const std::function<void(const std::shared_ptr<Node>&)>& func =
+         std::identity{}) {
+  BFS(DiGraph<Node, Edge>(graph), start, func);
+}
+
+template <NodeType Node, EdgeType Edge>
 void DFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
          const std::function<void(const std::shared_ptr<Node>&)>& func =
          std::identity{}) {
@@ -66,6 +73,13 @@ void DFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
       visited.try_emplace(i->Id(), false);
     }
   }
+}
+
+template <NodeType Node, EdgeType Edge>
+void DFS(const Graph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
+         const std::function<void(const std::shared_ptr<Node>&)>& func =
+         std::identity{}) {
+  DFS(DiGraph<Node, Edge>(graph), start, func);
 }
 
 }  // namespace xgraph::algorithm
