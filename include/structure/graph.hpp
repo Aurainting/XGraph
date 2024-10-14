@@ -12,6 +12,12 @@
 #include "utils.hpp"
 
 namespace xgraph {
+
+/*!
+ * Forward declaration
+ */
+template <NodeType Node, EdgeType Edge> class Graph;
+
 /*!
  * @brief Directed Graph
  * @tparam Node Node class that satisfy `NodeType` concept
@@ -39,7 +45,7 @@ class DiGraph {
         _adjacent(),
         _node_name() {}
 
-  DiGraph(const DiGraph& other)
+  DiGraph(const DiGraph<Node, Edge>& other)
       : _nodes(1, other._nodes.hash_function(), other._nodes.key_eq()),
         _edges(1, other._edges.hash_function(), other._edges.key_eq()),
         _adjacent(),
@@ -52,6 +58,21 @@ class DiGraph {
     // Copy edges
     for (const auto& e : other.Edges()) {
       AddEdge(e->Source()->Name(), e->Target()->Name(), e->Weight());
+    }
+  }
+
+  explicit DiGraph(const Graph<Node, Edge>& other)
+      : _nodes(1, utils::NodeHash<Node>, utils::NodeEqual<Node>),
+        _edges(1, utils::DiEdgeHash<Edge>, utils::DiEdgeEqual<Edge>),
+        _adjacent(),
+        _node_name() {
+    for (const auto& n : other.Nodes()) {
+      AddNode(n->Name());
+    }
+
+    for (const auto& e : other.Edges()) {
+      AddEdge(e->Source()->Name(), e->Target()->Name(), e->Weight());
+      AddEdge(e->Target()->Name(), e->Source()->Name(), e->Weight());
     }
   }
 
