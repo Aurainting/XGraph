@@ -1,18 +1,18 @@
 #include <string>
 
-#include <gtest/gtest.h>
+#include <catch2/catch_test_macros.hpp>
 
-#include "../include/xgraph.hpp"
+#include "xgraph.hpp"
 
 
-TEST(TestGraphStructure, DiGraph) {
+TEST_CASE("DiGraph Structure", "DiGraph") {
   using xgraph::MyEdge;
   using xgraph::MyNode;
 
   const int n = 10;
 
   auto graph = std::make_shared<xgraph::DiGraph<>>();
-  EXPECT_TRUE(graph->IsDirected());
+  REQUIRE(graph->IsDirected());
 
   // Add nodes
   const auto s_node = std::make_shared<MyNode>("source");
@@ -25,7 +25,7 @@ TEST(TestGraphStructure, DiGraph) {
     graph->AddNode(std::make_shared<MyNode>(std::to_string(i)));
   }
 
-  EXPECT_EQ(graph->NodeSize(), n + 2);
+  REQUIRE(graph->NodeSize() == n + 2);
 
   // Add edges
   graph->AddEdge(s_node, t_node, 2);
@@ -36,73 +36,74 @@ TEST(TestGraphStructure, DiGraph) {
     }
   }
 
-  EXPECT_EQ(graph->EdgeSize(), n * (n - 1) + 1);
+  REQUIRE(graph->EdgeSize() == n * (n - 1) + 1);
 
   // Node tests
-  EXPECT_TRUE(graph->HasNode("source"));
+  REQUIRE(graph->HasNode("source"));
 
-  EXPECT_TRUE(graph->HasNode(std::to_string(static_cast<int>(n / 2))));
+  REQUIRE(graph->HasNode(std::to_string(static_cast<int>(n / 2))));
 
   const auto s_node_test = graph->GetNode("source");
-  EXPECT_EQ(*s_node, *s_node_test);
+  REQUIRE(*s_node == *s_node_test);
+  REQUIRE(xgraph::utils::NodeEqual(s_node, s_node_test));
 
   const auto some_node_test =
       graph->GetNode(std::to_string(static_cast<int>(n / 2)));
-  EXPECT_TRUE(graph->Nodes().contains(some_node_test));
+  REQUIRE(graph->Nodes().contains(some_node_test));
 
   graph->RemoveNode("source");  // also edges with it
-  EXPECT_FALSE(graph->HasNode("source"));
+  REQUIRE_FALSE(graph->HasNode("source"));
 
   graph->AddNode(s_node);
-  EXPECT_TRUE(graph->HasNode("source"));
+  REQUIRE(graph->HasNode("source"));
 
   // Edge tests
-  EXPECT_FALSE(graph->HasEdge("source", "target", 2));
+  REQUIRE_FALSE(graph->HasEdge("source", "target", 2));
 
   graph->AddEdge(s_node, t_node, 2);
-  EXPECT_FALSE(graph->HasEdge("source", "target"));
-  EXPECT_TRUE(graph->HasEdge("source", "target", 2));
-  EXPECT_FALSE(graph->HasEdge("target", "source", 2));
+  REQUIRE_FALSE(graph->HasEdge("source", "target"));
+  REQUIRE(graph->HasEdge("source", "target", 2));
+  REQUIRE_FALSE(graph->HasEdge("target", "source", 2));
 
   graph->RemoveEdge("source", "target", 2);
-  EXPECT_FALSE(graph->HasEdge("source", "target", 2));
+  REQUIRE_FALSE(graph->HasEdge("source", "target", 2));
 
   graph->AddEdge("source", "target", 2);
-  EXPECT_TRUE(graph->HasEdge("source", "target", 2));
+  REQUIRE(graph->HasEdge("source", "target", 2));
 
-  EXPECT_TRUE(graph->HasEdge("0", std::to_string(static_cast<int>(n / 2))));
+  REQUIRE(graph->HasEdge("0", std::to_string(static_cast<int>(n / 2))));
 
   const auto s_t_edge_test = graph->GetEdge("source", "target", 2);
   const auto some_edge_test =
       graph->GetEdge("0", std::to_string(static_cast<int>(n / 2)));
 
-  EXPECT_TRUE(graph->Edges().contains(s_t_edge_test));
-  EXPECT_TRUE(graph->Edges().contains(some_edge_test));
-  EXPECT_TRUE(graph->Nodes().contains(some_edge_test->Source()));
-  EXPECT_TRUE(graph->Nodes().contains(some_edge_test->Target()));
+  REQUIRE(graph->Edges().contains(s_t_edge_test));
+  REQUIRE(graph->Edges().contains(some_edge_test));
+  REQUIRE(graph->Nodes().contains(some_edge_test->Source()));
+  REQUIRE(graph->Nodes().contains(some_edge_test->Target()));
 
-  EXPECT_EQ(graph->EdgeSize("0"), 2 * (n - 1));
-  EXPECT_EQ(graph->InEdgeSize("0"), n - 1);
-  EXPECT_EQ(graph->OutEdgeSize("0"), n - 1);
+  REQUIRE(graph->EdgeSize("0") == 2 * (n - 1));
+  REQUIRE(graph->InEdgeSize("0") == n - 1);
+  REQUIRE(graph->OutEdgeSize("0") == n - 1);
 
-  EXPECT_TRUE(graph->OutEdges("0").contains(some_edge_test));
+  REQUIRE(graph->OutEdges("0").contains(some_edge_test));
 
-  EXPECT_TRUE(graph->Children("source").contains(t_node));
+  REQUIRE(graph->Children("source").contains(t_node));
 
-  EXPECT_TRUE(graph->Predecessor("target").contains(s_node));
-  EXPECT_TRUE(graph->Successor("0").contains(some_node_test));
+  REQUIRE(graph->Predecessor("target").contains(s_node));
+  REQUIRE(graph->Successor("0").contains(some_node_test));
 
-  EXPECT_TRUE(graph->Neighbors("target").contains(s_node));
+  REQUIRE(graph->Neighbors("target").contains(s_node));
 }
 
-TEST(TestGraphStructure, Graph) {
+TEST_CASE("Graph Structure", "Graph") {
   using xgraph::MyEdge;
   using xgraph::MyNode;
 
   const int n = 10;
 
   auto graph = std::make_shared<xgraph::Graph<>>();
-  EXPECT_FALSE(graph->IsDirected());
+  REQUIRE_FALSE(graph->IsDirected());
 
   // Add nodes
   const auto s_node = std::make_shared<MyNode>("source");
@@ -114,7 +115,7 @@ TEST(TestGraphStructure, Graph) {
   for (int i = 0; i < n; ++i) {
     graph->AddNode(std::make_shared<MyNode>(std::to_string(i)));
   }
-  EXPECT_EQ(graph->NodeSize(), n + 2);
+  REQUIRE(graph->NodeSize() == n + 2);
 
   // Add edges
   graph->AddEdge(s_node, t_node, 2);
@@ -126,61 +127,62 @@ TEST(TestGraphStructure, Graph) {
       graph->AddEdge(std::to_string(i), std::to_string(j));
     }
   }
-  EXPECT_EQ(graph->EdgeSize(), n * (n - 1) / 2 + 2);
+  REQUIRE(graph->EdgeSize() == n * (n - 1) / 2 + 2);
 
   // Node tests
-  EXPECT_TRUE(graph->HasNode("source"));
-  EXPECT_TRUE(graph->HasNode(std::to_string(static_cast<int>(n / 2))));
+  REQUIRE(graph->HasNode("source"));
+  REQUIRE(graph->HasNode(std::to_string(static_cast<int>(n / 2))));
 
   const auto s_node_test = graph->GetNode("source");
-  EXPECT_EQ(*s_node, *s_node_test);
+  REQUIRE(*s_node == *s_node_test);
+  REQUIRE(xgraph::utils::NodeEqual(s_node, s_node_test));
 
   const auto some_node_test =
       graph->GetNode(std::to_string(static_cast<int>(n / 2)));
-  EXPECT_TRUE(graph->Nodes().contains(some_node_test));
+  REQUIRE(graph->Nodes().contains(some_node_test));
 
   graph->RemoveNode("source");
-  EXPECT_FALSE(graph->HasNode("source"));
+  REQUIRE_FALSE(graph->HasNode("source"));
 
   graph->AddNode(s_node);
-  EXPECT_TRUE(graph->HasNode("source"));
+  REQUIRE(graph->HasNode("source"));
 
   // Edge tests
-  EXPECT_FALSE(graph->HasEdge("target", "source", 2));
-  EXPECT_FALSE(graph->HasEdge("target", "source", 1));
+  REQUIRE_FALSE(graph->HasEdge("target", "source", 2));
+  REQUIRE_FALSE(graph->HasEdge("target", "source", 1));
 
   graph->AddEdge(s_node, t_node, 2);
   graph->AddEdge(t_node, s_node, 2);  // same as above
   graph->AddEdge(t_node, s_node, 1);  // same nodes with different weight
 
-  EXPECT_TRUE(graph->HasEdge("source", "target", 1));
-  EXPECT_TRUE(graph->HasEdge("target", "source", 2));
+  REQUIRE(graph->HasEdge("source", "target", 1));
+  REQUIRE(graph->HasEdge("target", "source", 2));
 
-  EXPECT_TRUE(graph->HasEdge("0", std::to_string(static_cast<int>(n / 2))));
+  REQUIRE(graph->HasEdge("0", std::to_string(static_cast<int>(n / 2))));
 
   const auto s_t_edge_test = graph->GetEdge("source", "target", 2);
   const auto some_edge_test =
       graph->GetEdge("0", std::to_string(static_cast<int>(n / 2)));
 
-  EXPECT_TRUE(graph->Edges().contains(s_t_edge_test));
-  EXPECT_TRUE(graph->Edges().contains(some_edge_test));
-  EXPECT_TRUE(graph->Nodes().contains(some_edge_test->Source()));
-  EXPECT_TRUE(graph->Nodes().contains(some_edge_test->Target()));
+  REQUIRE(graph->Edges().contains(s_t_edge_test));
+  REQUIRE(graph->Edges().contains(some_edge_test));
+  REQUIRE(graph->Nodes().contains(some_edge_test->Source()));
+  REQUIRE(graph->Nodes().contains(some_edge_test->Target()));
 
-  EXPECT_EQ(graph->EdgeSize("0"), n - 1);
-  EXPECT_EQ(graph->InEdgeSize("0"), n - 1);
-  EXPECT_EQ(graph->OutEdgeSize("0"), n - 1);
+  REQUIRE(graph->EdgeSize("0") == n - 1);
+  REQUIRE(graph->InEdgeSize("0") == n - 1);
+  REQUIRE(graph->OutEdgeSize("0") == n - 1);
 
-  EXPECT_TRUE(graph->OutEdges("0").contains(some_edge_test));
+  REQUIRE(graph->OutEdges("0").contains(some_edge_test));
 
-  EXPECT_TRUE(graph->Children("source").contains(t_node));
-  EXPECT_EQ(graph->Children("0").size(), n - 1);
+  REQUIRE(graph->Children("source").contains(t_node));
+  REQUIRE(graph->Children("0").size() == n - 1);
 
-  EXPECT_EQ(graph->Parents("0").size(), n - 1);
+  REQUIRE(graph->Parents("0").size() == n - 1);
 
-  EXPECT_TRUE(graph->Predecessor("target").contains(s_node));
-  EXPECT_TRUE(graph->Successor("0").contains(some_node_test));
+  REQUIRE(graph->Predecessor("target").contains(s_node));
+  REQUIRE(graph->Successor("0").contains(some_node_test));
 
-  EXPECT_TRUE(graph->Neighbors("target").contains(s_node));
-  EXPECT_EQ(graph->Neighbors("0").size(), n - 1);
+  REQUIRE(graph->Neighbors("target").contains(s_node));
+  REQUIRE(graph->Neighbors("0").size() == n - 1);
 }
