@@ -1,6 +1,5 @@
 #pragma once
 
-#include "structure/graph.hpp"
-
 #include "algorithm/shortest_path.hpp"
 #include "algorithm/traversal.hpp"
+#include "structure/graph.hpp"
