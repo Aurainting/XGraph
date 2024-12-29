@@ -813,7 +813,7 @@ class DiGraph {
  * @tparam Edge Edge class that satisfy `EdgeType` concept
  */
 template <NodeType Node = XNode<>, EdgeType Edge = XEdge<>>
-class Graph final : public DiGraph<Node, Edge> {
+class Graph : public DiGraph<Node, Edge> {
   using NodePtr = std::shared_ptr<Node>;
   using EdgePtr = std::shared_ptr<Edge>;
 
@@ -825,6 +825,11 @@ class Graph final : public DiGraph<Node, Edge> {
       : DiGraph<Node, Edge>(utils::NodePtrHash<Node>, utils::NodePtrEqual<Node>,
                             utils::EdgePtrHash<Edge>,
                             utils::EdgePtrEqual<Edge>) {}
+
+  /*!
+   * @brief Default Destructor
+   */
+  ~Graph() override = default;
 
   /*!
    * @brief Whether the graph is directed
