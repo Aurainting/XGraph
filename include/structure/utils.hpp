@@ -6,26 +6,26 @@
 
 namespace xgraph::utils {
 /*!
- * @brief Hash function of node
+ * @brief Hash function of node ptr
  * @tparam Node Input node type
- * @param n Input node
+ * @param n Input node ptr
  * @return Node id
  */
 template <NodeType Node>
-std::size_t NodeHash(const std::shared_ptr<Node> &n) {
+std::size_t NodePtrHash(const std::shared_ptr<Node>& n) {
   return n->Id();
 }
 
 /*!
- * @brief Equal function of two nodes
+ * @brief Equal function of two nodes ptr
  * @tparam Node Input node type
- * @param lhs Left node
- * @param rhs Right node
- * @return Boolean
+ * @param lhs Left node ptr
+ * @param rhs Right node ptr
+ * @return Whether two nodes ptr are equal
  */
 template <NodeType Node>
-bool NodeEqual(const std::shared_ptr<Node> &lhs,
-               const std::shared_ptr<Node> &rhs) {
+bool NodePtrEqual(const std::shared_ptr<Node>& lhs,
+                  const std::shared_ptr<Node>& rhs) {
   return *lhs == *rhs;
 }
 
@@ -36,69 +36,69 @@ bool NodeEqual(const std::shared_ptr<Node> &lhs,
  * @param out Output stream
  */
 template <NodeType Node>
-void PrintNode(const std::shared_ptr<Node> &n, std::ostream &out = std::cout) {
-  out << "Node : " << n->Name() << std::endl;
+void PrintNode(const Node& n, std::ostream& out = std::cout) {
+  out << "Node : " << n.Name() << std::endl;
 }
 
 /*!
- * @brief Hash function of edge in digraph
+ * @brief Hash function of edge ptr in digraph
  * @tparam Edge Input edge type
- * @param e Input edge
- * @return Edge hash
+ * @param e Input edge ptr
+ * @return Edge hash value
  */
 template <EdgeType Edge>
-std::size_t DiEdgeHash(const std::shared_ptr<Edge> &e) {
-  return NodeHash(e->Source()) << 2 ^ NodeHash(e->Target()) ^
+std::size_t DiEdgePtrHash(const std::shared_ptr<Edge>& e) {
+  return NodePtrHash(e->Source()) << 2 ^ NodePtrHash(e->Target()) ^
          std::hash<double>{}(e->Weight());
 }
 
 /*!
- * @brief Equal function of edge in digraph
+ * @brief Equal function of two edges ptr in digraph
  * @tparam Edge Input edge type
- * @param lhs Left edge
- * @param rhs Right edge
- * @return Boolean
+ * @param lhs Left edge ptr
+ * @param rhs Right edge ptr
+ * @return Whether two edges ptr are equal
  */
 template <EdgeType Edge>
-bool DiEdgeEqual(const std::shared_ptr<Edge> &lhs,
-                 const std::shared_ptr<Edge> &rhs) {
+bool DiEdgePtrEqual(const std::shared_ptr<Edge>& lhs,
+                    const std::shared_ptr<Edge>& rhs) {
   return *lhs == *rhs;
 }
 
 /*!
- * @brief Hash function of edge in graph
+ * @brief Hash function of edge ptr in graph
  * @tparam Edge Input edge type
- * @param e Input edge
- * @return Edge hash
+ * @param e Input edge ptr
+ * @return Edge hash value
  */
 template <EdgeType Edge>
-std::size_t EdgeHash(const std::shared_ptr<Edge> &e) {
-  return NodeHash(e->Source()) ^ NodeHash(e->Target()) ^
+std::size_t EdgePtrHash(const std::shared_ptr<Edge>& e) {
+  return NodePtrHash(e->Source()) ^ NodePtrHash(e->Target()) ^
          std::hash<double>{}(e->Weight());
 }
 
 /*!
  * @brief Reverse edge's source and target
  * @tparam Edge Input edge type
- * @param e Input edge
- * @return Reversed edge
+ * @param e Input edge ptr
+ * @return Reversed edge ptr
  */
 template <EdgeType Edge>
-std::shared_ptr<Edge> ReverseEdge(const std::shared_ptr<Edge> &e) {
+std::shared_ptr<Edge> ReverseEdgePtr(const std::shared_ptr<Edge>& e) {
   return std::make_shared<Edge>(e->Target(), e->Source(), e->Weight());
 }
 
 /*!
- * @brief Equal function of edge in graph
+ * @brief Equal function of two edges ptr in graph
  * @tparam Edge Input edge type
- * @param lhs Left edge
- * @param rhs Right edge
- * @return Boolean
+ * @param lhs Left edge ptr
+ * @param rhs Right edge ptr
+ * @return Whether two edges ptr are equal
  */
 template <EdgeType Edge>
-bool EdgeEqual(const std::shared_ptr<Edge> &lhs,
-               const std::shared_ptr<Edge> &rhs) {
-  return *lhs == *rhs || *(ReverseEdge(lhs)) == *rhs;
+bool EdgePtrEqual(const std::shared_ptr<Edge>& lhs,
+                  const std::shared_ptr<Edge>& rhs) {
+  return *lhs == *rhs || *(ReverseEdgePtr(lhs)) == *rhs;
 }
 
 /*!
@@ -108,8 +108,8 @@ bool EdgeEqual(const std::shared_ptr<Edge> &lhs,
  * @param out Output stream
  */
 template <EdgeType Edge>
-void PrintEdge(const std::shared_ptr<Edge> &e, std::ostream &out = std::cout) {
-  out << "Edge : (" << e->Source()->Name() << ", " << e->Target()->Name() << ")"
+void PrintEdge(const Edge& e, std::ostream& out = std::cout) {
+  out << "Edge : (" << e.Source()->Name() << ", " << e.Target()->Name() << ")"
       << std::endl;
 }
 }  // namespace xgraph::utils

@@ -3,13 +3,18 @@
 #include <concepts>
 
 namespace xgraph {
+template <typename T>
+concept UserDataType =
+    std::is_default_constructible_v<T> &&
+    (std::is_copy_constructible_v<T> || std::is_move_constructible_v<T>);
+
 /*!
  * @brief Concept specify node type
  * @tparam T
  */
 template <typename T>
-concept NodeType = requires(T x) {
-  { x.Id() } -> std::convertible_to<std::size_t>;
+concept NodeType = requires(T n) {
+  { n.Id() } -> std::convertible_to<std::size_t>;
 };
 
 /*!
@@ -27,8 +32,9 @@ concept NodePtrType = requires {
  * @tparam T
  */
 template <typename T>
-concept EdgeType = requires(T x) {
-  { x.Source() } -> NodePtrType;
-  { x.Target() } -> NodePtrType;
+concept EdgeType = requires(T e) {
+  { e.Source() } -> NodePtrType;
+  { e.Target() } -> NodePtrType;
+  { e.Weight() } -> std::convertible_to<double>;
 };
 }  // namespace xgraph
