@@ -1,13 +1,22 @@
-cmake_minimum_required(VERSION 3.21)
-project(xgraph VERSION 1.0)
+cmake_minimum_required(VERSION 3.30)
+project(xgraph VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-file(GLOB_RECURSE TEST_SOURCES "${CMAKE_SOURCE_DIR}/tests/*.cpp")
+include(FetchContent)
 
-add_subdirectory("${CMAKE_SOURCE_DIR}/3rdparty/catch2")
+FetchContent_Declare(
+  Catch2
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+  GIT_TAG        v3.10.0
+)
 
-add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES})
-target_include_directories(${PROJECT_NAME}_tests PRIVATE "${CMAKE_SOURCE_DIR}/include/")
-target_link_libraries(${PROJECT_NAME}_tests PRIVATE Catch2::Catch2WithMain)
+FetchContent_MakeAvailable(Catch2)
+
+list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+
+include(CTest)
+include(Catch)
+
+add_subdirectory(tests)
