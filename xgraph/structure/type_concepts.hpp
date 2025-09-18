@@ -3,6 +3,11 @@
 #include <concepts>
 
 namespace xgraph {
+
+/*!
+ * @brief Concept specify user data type
+ * @tparam T
+ */
 template <typename T>
 concept UserDataType =
     std::is_default_constructible_v<T> &&
@@ -37,4 +42,5 @@ concept EdgeType = requires(T e) {
   { e.Target() } -> NodePtrType;
   { e.Weight() } -> std::convertible_to<double>;
 };
-}  // namespace xgraph
+
+} // namespace xgraph

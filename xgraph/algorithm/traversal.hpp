@@ -1,21 +1,28 @@
 #pragma once
 
+#include <optional>
 #include <queue>
 #include <stack>
 
-#include "../structure/graph.hpp"
+#include "structure/graph.hpp"
+#include "structure/type_traits.hpp"
 
 namespace xgraph::algorithm {
+
 template <NodeType Node, EdgeType Edge>
 void BFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
-         const std::function<void(const std::shared_ptr<Node>&)>& func =
-             std::identity{}) {
-  std::queue<std::shared_ptr<Node> > q;
+         const std::optional<NodePtrVisitor_t<Node>>& func = std::nullopt) {
+  std::queue<std::shared_ptr<Node>> q;
   std::unordered_map<std::size_t, bool> visited;
+
+  if (func.has_value()) {
+    func.value()(start);
+  }
+  visited[start->Id()] = true;
 
   for (const auto& i : graph.Neighbors(start->Name())) {
     q.push(i);
-    visited[i->Id()] = false;
+    visited.try_emplace(i->Id(), false);
   }
 
   while (!q.empty()) {
@@ -26,7 +33,10 @@ void BFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
       continue;
     }
 
-    func(n);
+    if (func.has_value()) {
+      func.value()(n);
+    }
+
     visited[n->Id()] = true;
 
     for (const auto& i : graph.Neighbors(n->Name())) {
@@ -38,21 +48,24 @@ void BFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
 
 template <NodeType Node, EdgeType Edge>
 void BFS(const Graph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
-         const std::function<void(const std::shared_ptr<Node>&)>& func =
-             std::identity{}) {
+         const std::optional<NodePtrVisitor_t<Node>>& func = std::nullopt) {
   BFS(DiGraph<Node, Edge>(graph), start, func);
 }
 
 template <NodeType Node, EdgeType Edge>
 void DFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
-         const std::function<void(const std::shared_ptr<Node>&)>& func =
-             std::identity{}) {
-  std::stack<std::shared_ptr<Node> > s;
+         const std::optional<NodePtrVisitor_t<Node>>& func = std::nullopt) {
+  std::stack<std::shared_ptr<Node>> s;
   std::unordered_map<std::size_t, bool> visited;
+
+  if (func.has_value()) {
+    func.value()(start);
+  }
+  visited[start->Id()] = true;
 
   for (const auto& i : graph.Neighbors(start->Name())) {
     s.push(i);
-    visited[i->Id()] = false;
+    visited.try_emplace(i->Id(), false);
   }
 
   while (!s.empty()) {
@@ -63,7 +76,10 @@ void DFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
       continue;
     }
 
-    func(n);
+    if (func.has_value()) {
+      func.value()(n);
+    }
+
     visited[n->Id()] = true;
 
     for (const auto& i : graph.Neighbors(n->Name())) {
@@ -75,8 +91,8 @@ void DFS(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
 
 template <NodeType Node, EdgeType Edge>
 void DFS(const Graph<Node, Edge>& graph, const std::shared_ptr<Node>& start,
-         const std::function<void(const std::shared_ptr<Node>&)>& func =
-             std::identity{}) {
+         const std::optional<NodePtrVisitor_t<Node>> func = std::nullopt) {
   DFS(DiGraph<Node, Edge>(graph), start, func);
 }
-}  // namespace xgraph::algorithm
+
+} // namespace xgraph::algorithm

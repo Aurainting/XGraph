@@ -7,6 +7,7 @@
 #include "type_concepts.hpp"
 
 namespace xgraph {
+
 /*!
  * @brief Empty Object
  */
@@ -16,9 +17,8 @@ struct EmptyObject {};
  * @brief Default node class
  * @tparam NodeData Node data
  */
-template <UserDataType NodeData = EmptyObject>
-class XNode {
- public:
+template <UserDataType NodeData = EmptyObject> class XNode {
+public:
   /*!
    * @brief Explicit constructor of `XNode`
    * @param id Node identification
@@ -87,8 +87,7 @@ class XNode {
    */
   explicit XNode(const std::string& name, const NodeData& user_data)
     requires std::is_copy_constructible_v<NodeData>
-      : _id(std::hash<std::string>{}(name)),
-        _name(name),
+      : _id(std::hash<std::string>{}(name)), _name(name),
         _node_data(user_data) {}
 
   /*!
@@ -98,8 +97,7 @@ class XNode {
    */
   explicit XNode(const std::string& name, NodeData&& user_data)
     requires std::is_move_constructible_v<NodeData>
-      : _id(std::hash<std::string>{}(name)),
-        _name(name),
+      : _id(std::hash<std::string>{}(name)), _name(name),
         _node_data(std::move(user_data)) {}
 
   /*!
@@ -155,7 +153,7 @@ class XNode {
    */
   bool operator==(const XNode& other) const { return _id == other._id; }
 
- private:
+private:
   //! @brief Node identification
   const std::size_t _id;
 
@@ -165,4 +163,5 @@ class XNode {
   //! @brief Node data
   NodeData _node_data{};
 };
-}  // namespace xgraph
+
+} // namespace xgraph

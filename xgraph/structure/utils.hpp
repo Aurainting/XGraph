@@ -5,6 +5,7 @@
 #include "edge.hpp"
 
 namespace xgraph::utils {
+
 /*!
  * @brief Hash function of node ptr
  * @tparam Node Input node type
@@ -98,7 +99,7 @@ std::shared_ptr<Edge> ReverseEdgePtr(const std::shared_ptr<Edge>& e) {
 template <EdgeType Edge>
 bool EdgePtrEqual(const std::shared_ptr<Edge>& lhs,
                   const std::shared_ptr<Edge>& rhs) {
-  return *lhs == *rhs || *(ReverseEdgePtr(lhs)) == *rhs;
+  return *lhs == *rhs || *ReverseEdgePtr(lhs) == *rhs;
 }
 
 /*!
@@ -112,4 +113,5 @@ void PrintEdge(const Edge& e, std::ostream& out = std::cout) {
   out << "Edge : (" << e.Source()->Name() << ", " << e.Target()->Name() << ")"
       << std::endl;
 }
-}  // namespace xgraph::utils
+
+} // namespace xgraph::utils

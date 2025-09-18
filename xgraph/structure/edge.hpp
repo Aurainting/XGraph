@@ -6,6 +6,7 @@
 #include "type_concepts.hpp"
 
 namespace xgraph {
+
 /*!
  * @brief Default edge class
  * @tparam Node Use `XNode` by default
@@ -13,7 +14,7 @@ namespace xgraph {
  */
 template <NodeType Node = XNode<>, UserDataType EdgeData = EmptyObject>
 class XEdge {
- public:
+public:
   /*!
    * @brief Explicit constructor of `XEdge`
    * @param source Source node pointer
@@ -36,9 +37,7 @@ class XEdge {
   XEdge(const std::weak_ptr<Node>& source, const std::weak_ptr<Node>& target,
         const double weight, const EdgeData& user_data)
     requires std::is_copy_constructible_v<EdgeData>
-      : _source(source),
-        _target(target),
-        _weight(weight),
+      : _source(source), _target(target), _weight(weight),
         _edge_data(user_data) {
     // Nothing to do here.
   }
@@ -53,9 +52,7 @@ class XEdge {
   XEdge(const std::weak_ptr<Node>& source, const std::weak_ptr<Node>& target,
         const double weight, EdgeData&& user_data)
     requires std::is_move_constructible_v<EdgeData>
-      : _source(source),
-        _target(target),
-        _weight(weight),
+      : _source(source), _target(target), _weight(weight),
         _edge_data(std::move(user_data)) {
     // Nothing to do here.
   }
@@ -118,11 +115,11 @@ class XEdge {
    * @return Boolean
    */
   bool operator==(const XEdge& other) const {
-    return *(_source.lock()) == *(other.Source()) &&
-           *(_target.lock()) == *(other.Target()) && _weight == other.Weight();
+    return *_source.lock() == *other.Source() &&
+           *_target.lock() == *other.Target() && _weight == other.Weight();
   }
 
- private:
+private:
   //! @brief Source node without ownership
   const std::weak_ptr<Node> _source;
 
@@ -135,4 +132,5 @@ class XEdge {
   //! @brief Edge data
   EdgeData _edge_data;
 };
-}  // namespace xgraph
+
+} // namespace xgraph

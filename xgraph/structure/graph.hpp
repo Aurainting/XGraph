@@ -9,35 +9,34 @@
 
 #include "edge.hpp"
 #include "node.hpp"
+#include "type_traits.hpp"
 #include "utils.hpp"
 
 namespace xgraph {
+
 /*!
  * Forward declaration
  */
-template <NodeType Node, EdgeType Edge>
-class Graph;
+template <NodeType Node, EdgeType Edge> class Graph;
 
 /*!
  * @brief Directed Graph
  * @tparam Node Node class that satisfy `NodeType` concept
  * @tparam Edge Edge class that satisfy `EdgeType` concept
  */
-template <NodeType Node = XNode<>, EdgeType Edge = XEdge<>>
-class DiGraph {
+template <NodeType Node = XNode<>, EdgeType Edge = XEdge<>> class DiGraph {
   using NodePtr = std::shared_ptr<Node>;
   using EdgePtr = std::shared_ptr<Edge>;
   using NodeAdj = std::unordered_map<std::size_t, std::weak_ptr<Edge>>;
 
- public:
+public:
   /*!
    * @brief Default constructor
    */
   DiGraph()
       : _nodes(1, utils::NodePtrHash<Node>, utils::NodePtrEqual<Node>),
         _edges(1, utils::DiEdgePtrHash<Edge>, utils::DiEdgePtrEqual<Edge>),
-        _adjacent(),
-        _node_name() {}
+        _adjacent(), _node_name() {}
 
   /*!
    * @brief Constructor
@@ -50,10 +49,8 @@ class DiGraph {
           const std::function<bool(const NodePtr&, const NodePtr&)>& node_equal,
           const std::function<std::size_t(const EdgePtr&)>& edge_hash,
           const std::function<bool(const EdgePtr&, const EdgePtr&)>& edge_equal)
-      : _nodes(1, node_hash, node_equal),
-        _edges(1, edge_hash, edge_equal),
-        _adjacent(),
-        _node_name() {}
+      : _nodes(1, node_hash, node_equal), _edges(1, edge_hash, edge_equal),
+        _adjacent(), _node_name() {}
 
   /*!
    * @brief Copy constructor
@@ -62,11 +59,10 @@ class DiGraph {
   DiGraph(const DiGraph<Node, Edge>& other)
       : _nodes(1, other._nodes.hash_function(), other._nodes.key_eq()),
         _edges(1, other._edges.hash_function(), other._edges.key_eq()),
-        _adjacent(),
-        _node_name() {
+        _adjacent(), _node_name() {
     // Copy nodes
     for (const auto& n : other.Nodes()) {
-      AddNode(n->Id(), n->Data());
+      AddNode(n->Id(), n->Name(), n->Data());
     }
 
     // Copy edges
@@ -84,11 +80,10 @@ class DiGraph {
                std::move(other._nodes.key_eq())),
         _edges(1, std::move(other._edges.hash_function()),
                std::move(other._edges.key_eq())),
-        _adjacent(),
-        _node_name() {
+        _adjacent(), _node_name() {
     // Copy nodes
     for (const auto& n : other.Nodes()) {
-      AddNode(n->Id(), n->Data());
+      AddNode(n->Id(), n->Name(), n->Data());
     }
 
     // Copy edges
@@ -104,10 +99,9 @@ class DiGraph {
   explicit DiGraph(const Graph<Node, Edge>& other)
       : _nodes(1, utils::NodePtrHash<Node>, utils::NodePtrEqual<Node>),
         _edges(1, utils::DiEdgePtrHash<Edge>, utils::DiEdgePtrEqual<Edge>),
-        _adjacent(),
-        _node_name() {
+        _adjacent(), _node_name() {
     for (const auto& n : other.Nodes()) {
-      AddNode(n->Id(), n->Data());
+      AddNode(n->Id(), n->Name(), n->Data());
     }
 
     for (const auto& e : other.Edges()) {
@@ -123,10 +117,9 @@ class DiGraph {
   explicit DiGraph(Graph<Node, Edge>&& other)
       : _nodes(1, utils::NodePtrHash<Node>, utils::NodePtrEqual<Node>),
         _edges(1, utils::DiEdgePtrHash<Edge>, utils::DiEdgePtrEqual<Edge>),
-        _adjacent(),
-        _node_name() {
+        _adjacent(), _node_name() {
     for (const auto& n : other.Nodes()) {
-      AddNode(n->Id(), n->Data());
+      AddNode(n->Id(), n->Name(), n->Data());
     }
 
     for (const auto& e : other.Edges()) {
@@ -789,16 +782,12 @@ class DiGraph {
     return res;
   }
 
- private:
+private:
   //! @brief Nodes owner
-  std::unordered_set<NodePtr, std::function<std::size_t(const NodePtr&)>,
-                     std::function<bool(const NodePtr&, const NodePtr&)>>
-      _nodes;
+  std::unordered_set<NodePtr, NodePtrHash_t<Node>, NodePtrEqual_t<Node>> _nodes;
 
   //! @brief Edges owner
-  std::unordered_set<EdgePtr, std::function<std::size_t(const EdgePtr&)>,
-                     std::function<bool(const EdgePtr&, const EdgePtr&)>>
-      _edges;
+  std::unordered_set<EdgePtr, EdgePtrHash_t<Edge>, EdgePtrEqual_t<Edge>> _edges;
 
   //! @brief Adjacent
   std::unordered_map<std::size_t, NodeAdj> _adjacent;
@@ -817,7 +806,7 @@ class Graph : public DiGraph<Node, Edge> {
   using NodePtr = std::shared_ptr<Node>;
   using EdgePtr = std::shared_ptr<Edge>;
 
- public:
+public:
   /*!
    * @brief Default constructor
    */
@@ -969,4 +958,5 @@ class Graph : public DiGraph<Node, Edge> {
     return DiGraph<Node, Edge>::NodeLineage(name);
   }
 };
-}  // namespace xgraph
+
+} // namespace xgraph
