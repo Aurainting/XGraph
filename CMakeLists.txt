@@ -4,19 +4,31 @@ project(xgraph VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(FetchContent)
+add_library(xgraph INTERFACE)
+add_library(xgraph::xgraph ALIAS xgraph)
 
-FetchContent_Declare(
-  Catch2
-  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG        v3.10.0
+target_include_directories(xgraph INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/xgraph>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-FetchContent_MakeAvailable(Catch2)
+option(XGRAPH_BUILD_TESTS "Build tests" OFF)
 
-list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+if(XGRAPH_BUILD_TESTS)
+    include(FetchContent)
 
-include(CTest)
-include(Catch)
+    FetchContent_Declare(
+      Catch2
+      GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+      GIT_TAG        v3.10.0
+    )
 
-add_subdirectory(tests)
+    FetchContent_MakeAvailable(Catch2)
+
+    list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+
+    include(CTest)
+    include(Catch)
+
+    add_subdirectory(tests)
+endif()
