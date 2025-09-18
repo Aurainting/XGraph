@@ -2,7 +2,9 @@
 
 #include <algorithm>
 #include <format>
+#include <optional>
 #include <queue>
+#include <ranges>
 #include <unordered_map>
 #include <vector>
 
@@ -53,7 +55,7 @@ AStarPath(const DiGraph<Node, Edge>& graph, const std::shared_ptr<Node>& source,
         path.push_back(node);
         node = explored[node];
       }
-      std::reverse(path.begin(), path.end());
+      std::ranges::reverse(path);
       return path;
     }
 
