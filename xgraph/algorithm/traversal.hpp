@@ -119,7 +119,7 @@ void TopologicalSort(
       }
 
       if (func.has_value()) {
-        func.value()(node);
+        func.value()(graph.GetNode(node));
       }
 
       for (const auto& child : graph.Children(node)) {
