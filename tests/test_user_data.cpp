@@ -4,7 +4,6 @@
 #include <cstddef>
 #include <format>
 #include <future>
-#include <iostream>
 #include <latch>
 #include <memory>
 #include <mutex>
