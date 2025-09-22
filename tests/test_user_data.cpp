@@ -244,5 +244,9 @@ TEST_CASE("Wavefront Parallelism", "DiGraph") {
   for (const auto& edge : taskflow->Edges()) {
     REQUIRE(edge->Data().Status() == DependencyStatus::DONE);
   }
-  REQUIRE(counter.MaxActive() > 1);
+  if (num_thread > 2) {
+    REQUIRE(counter.MaxActive() == 3);
+  } else {
+    REQUIRE(counter.MaxActive() > 1);
+  }
 }
