@@ -152,7 +152,7 @@ public:
    * @brief Add node ptr (no effect if exists already)
    * @param n Node ptr
    */
-  void AddNode(const NodePtr& n) {
+  virtual void AddNode(const NodePtr& n) {
     const auto& [node_it, inserted] = _nodes.insert(n);
 
     if (inserted) {
@@ -176,7 +176,7 @@ public:
    * @brief Remove node
    * @param n Node need to remove
    */
-  void RemoveNode(const NodePtr& n) {
+  virtual void RemoveNode(const NodePtr& n) {
     _node_name.erase(n->Name());
     _nodes.erase(n);
   }
@@ -206,7 +206,7 @@ public:
    * @brief Add edge ptr (no effect if exists already)
    * @param e Edge ptr
    */
-  void AddEdge(const EdgePtr& e) {
+  virtual void AddEdge(const EdgePtr& e) {
     const auto& [edge_it, inserted] = _edges.insert(e);
 
     if (inserted) {
@@ -254,7 +254,7 @@ public:
    * @brief Remove edge
    * @param e Edge need to remove
    */
-  void RemoveEdge(const EdgePtr& e) {
+  virtual void RemoveEdge(const EdgePtr& e) {
     _adjacent.erase(e->Source()->Id());
     _edges.erase(e);
   }
@@ -282,7 +282,7 @@ public:
    * @param id Node id
    * @return Node ptr if exists else nullptr
    */
-  NodePtr GetNode(const std::size_t& id) const {
+  virtual NodePtr GetNode(const std::size_t& id) const {
     if (const auto& res = _nodes.find(std::make_shared<Node>(id));
         res != _nodes.end()) {
       return *res;
@@ -295,7 +295,7 @@ public:
    * @param name Node name
    * @return Node ptr if exists else nullptr
    */
-  NodePtr GetNode(const std::string& name) const {
+  virtual NodePtr GetNode(const std::string& name) const {
     if (const auto& res = _node_name.find(name); res != _node_name.end()) {
       return res->second.lock();
     }
@@ -329,6 +329,18 @@ public:
 
   /*!
    * @brief Get edge ptr
+   * @param e Edge need to query
+   * @return Edge ptr if exists else nullptr
+   */
+  virtual EdgePtr GetEdge(const EdgePtr& e) const {
+    if (const auto& res = _edges.find(e); res != _edges.end()) {
+      return *res;
+    }
+    return nullptr;
+  }
+
+  /*!
+   * @brief Get edge ptr
    * @tparam T Argument type that can convert to call `GetNode`
    * @param s Source node
    * @param t Target node
@@ -342,12 +354,8 @@ public:
     const auto s_node_ptr = GetNode(std::forward<T>(s));
     const auto t_node_ptr = GetNode(std::forward<T>(t));
     if (s_node_ptr && t_node_ptr) {
-      if (const auto& res = _edges.find(
-              std::make_shared<Edge>(std::weak_ptr<Node>(s_node_ptr),
-                                     std::weak_ptr<Node>(t_node_ptr), w));
-          res != _edges.end()) {
-        return *res;
-      }
+      return GetEdge(std::make_shared<Edge>(
+          std::weak_ptr<Node>(s_node_ptr), std::weak_ptr<Node>(t_node_ptr), w));
     }
     return nullptr;
   }
