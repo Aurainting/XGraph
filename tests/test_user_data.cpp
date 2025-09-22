@@ -51,7 +51,7 @@ public:
 
   void Run(ConcurrentCounter& counter) const {
     counter.Add();
-    std::this_thread::sleep_for(std::chrono::seconds(x + y));
+    std::this_thread::sleep_for(std::chrono::milliseconds(x + y));
     counter.Sub();
   }
 
@@ -205,14 +205,14 @@ TEST_CASE("Wavefront Parallelism", "DiGraph") {
   }
 
   // Run
-  auto n = std::thread::hardware_concurrency();
-  if (n == 0) {
-    n = 2;
+  auto num_thread = std::thread::hardware_concurrency();
+  if (num_thread == 0) {
+    num_thread = 2;
   }
 
   auto counter = ConcurrentCounter();
   {
-    auto pool = ThreadPool(n);
+    auto pool = ThreadPool(num_thread);
     const std::optional<xgraph::NodePtrVisitor_t<XNode<Task>>> visitor =
         [&taskflow, &pool, &counter](const std::shared_ptr<XNode<Task>>& node) {
           node->Data().Latch() =
