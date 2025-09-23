@@ -24,7 +24,7 @@ public:
    * @param id Node identification
    * @param name Node name
    */
-  explicit XNode(const std::size_t& id, std::string name)
+  explicit XNode(const std::size_t id, std::string name)
       : _id(id), _name(std::move(name)), _node_data() {}
 
   /*!
@@ -33,7 +33,7 @@ public:
    * @param name Node name
    * @param user_data User node data (copy constructible)
    */
-  explicit XNode(const std::size_t& id, std::string name,
+  explicit XNode(const std::size_t id, std::string name,
                  const NodeData& user_data)
     requires std::is_copy_constructible_v<NodeData>
       : _id(id), _name(std::move(name)), _node_data(user_data) {}
@@ -44,7 +44,7 @@ public:
    * @param name Node name
    * @param user_data User node data (move constructible)
    */
-  explicit XNode(const std::size_t& id, std::string name, NodeData&& user_data)
+  explicit XNode(const std::size_t id, std::string name, NodeData&& user_data)
     requires std::is_move_constructible_v<NodeData>
       : _id(id), _name(std::move(name)), _node_data(std::move(user_data)) {}
 
@@ -52,7 +52,7 @@ public:
    * @brief Explicit constructor of `XNode`
    * @param id Node identification
    */
-  explicit XNode(const std::size_t& id)
+  explicit XNode(const std::size_t id)
       : _id(id), _name(std::to_string(id)), _node_data() {}
 
   /*!
@@ -60,7 +60,7 @@ public:
    * @param id Node identification
    * @param user_data User node data (copy constructible)
    */
-  explicit XNode(const std::size_t& id, const NodeData& user_data)
+  explicit XNode(const std::size_t id, const NodeData& user_data)
     requires std::is_copy_constructible_v<NodeData>
       : _id(id), _name(std::to_string(id)), _node_data(user_data) {}
 
@@ -69,7 +69,7 @@ public:
    * @param id Node identification
    * @param user_data User node data (move constructible)
    */
-  explicit XNode(const std::size_t& id, NodeData&& user_data)
+  explicit XNode(const std::size_t id, NodeData&& user_data)
     requires std::is_move_constructible_v<NodeData>
       : _id(id), _name(std::to_string(id)), _node_data(std::move(user_data)) {}
 
