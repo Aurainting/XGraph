@@ -1,0 +1,5 @@
+var searchData=
+[
+  ['parents_0',['Parents',['../classxgraph_1_1DiGraph.html#a1aefbee60f1b49d6c7421832c7453b2c',1,'xgraph::DiGraph::Parents(const std::size_t &amp;id) const'],['../classxgraph_1_1DiGraph.html#a6726fa2a500f89aaf59fca9293812e9d',1,'xgraph::DiGraph::Parents(const std::string &amp;name) const'],['../classxgraph_1_1Graph.html#a128bfc6c581d811e57d626320d13e351',1,'xgraph::Graph::Parents(const std::size_t &amp;id) const override'],['../classxgraph_1_1Graph.html#ac1051ce191631f0a88937e13a273fc42',1,'xgraph::Graph::Parents(const std::string &amp;name) const override']]],
+  ['predecessor_1',['Predecessor',['../classxgraph_1_1DiGraph.html#a734816e6ef27a0d8fdf98d27a7d8c22b',1,'xgraph::DiGraph::Predecessor(const std::size_t &amp;id) const'],['../classxgraph_1_1DiGraph.html#ac6a13a39e4cfbd9bc282ec868343137e',1,'xgraph::DiGraph::Predecessor(const std::string &amp;name) const'],['../classxgraph_1_1Graph.html#a49bd0a0cd25d10b7e0e82237fa6c2870',1,'xgraph::Graph::Predecessor(const std::size_t &amp;id) const override'],['../classxgraph_1_1Graph.html#aec0f7a4583c43708547800c40735361b',1,'xgraph::Graph::Predecessor(const std::string &amp;name) const override']]]
+];

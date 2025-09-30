@@ -12,6 +12,7 @@ target_include_directories(xgraph INTERFACE
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
+# Build test
 option(XGRAPH_BUILD_TESTS "Build tests" OFF)
 
 if(XGRAPH_BUILD_TESTS)
@@ -31,4 +32,27 @@ if(XGRAPH_BUILD_TESTS)
     include(Catch)
 
     add_subdirectory(tests)
+endif()
+
+# Build doc
+option(XGRAPH_BUILD_DOC "Build documentation" OFF)
+
+if(XGRAPH_BUILD_DOC)
+    find_package(Doxygen)
+    if(DOXYGEN_FOUND)
+        set(DOXYGEN_IN  ${CMAKE_SOURCE_DIR}/Doxyfile.in)
+        set(DOXYGEN_OUT ${CMAKE_BINARY_DIR}/Doxyfile)
+        configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+
+        message(STATUS "Doxygen build enabled")
+
+        add_custom_target(doc_doxygen
+          COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+          COMMENT "Generating API documentation with Doxygen"
+          VERBATIM
+        )
+    else()
+        message(WARNING "Doxygen not found, documentation will not be built")
+    endif()
 endif()
