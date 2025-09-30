@@ -319,13 +319,16 @@ public:
    * @brief Get const nodes
    * @return Nodes
    */
-  auto Nodes() const { return _nodes; }
+  virtual std::unordered_set<NodePtr, NodePtrHash_t<Node>, NodePtrEqual_t<Node>>
+  Nodes() const {
+    return _nodes;
+  }
 
   /*!
    * @brief Get size of nodes
    * @return Size of nodes
    */
-  [[nodiscard]] std::size_t NodeSize() const { return Nodes().size(); }
+  [[nodiscard]] virtual std::size_t NodeSize() const { return Nodes().size(); }
 
   /*!
    * @brief Get edge ptr
@@ -379,7 +382,10 @@ public:
    * @brief Get const edges
    * @return Edges
    */
-  auto Edges() const { return _edges; }
+  virtual std::unordered_set<EdgePtr, EdgePtrHash_t<Edge>, EdgePtrEqual_t<Edge>>
+  Edges() const {
+    return _edges;
+  }
 
   /*!
    * @brief Get edges bind to the node (in edges and out edges)
@@ -493,7 +499,7 @@ public:
    * @brief Get size of all edges
    * @return Size of edges
    */
-  [[nodiscard]] std::size_t EdgeSize() const { return Edges().size(); }
+  [[nodiscard]] virtual std::size_t EdgeSize() const { return Edges().size(); }
 
   /*!
    * @brief Get size of edges bind to the node
