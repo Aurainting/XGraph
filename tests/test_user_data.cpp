@@ -1,7 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <chrono>
 #include <condition_variable>
-#include <cstddef>
 #include <format>
 #include <future>
 #include <latch>
@@ -84,26 +83,26 @@ private:
 };
 
 /*!
- * @brief ThreadPool (https://github.com/progschj/ThreadPool)
+ * @brief ThreadPool (based on https://github.com/progschj/ThreadPool)
  */
 class ThreadPool {
 public:
   /*!
    * @brief The constructor just launches some amount of workers
    */
-  explicit ThreadPool(const size_t threads) : stop(false) {
+  explicit ThreadPool(const size_t threads) {
     for (size_t i = 0; i < threads; ++i)
-      workers.emplace_back([this] {
+      workers.emplace_back([this](const auto& st) {
         for (;;) {
-          std::function<void()> task;
+          std::function<void()> task{};
           {
-            std::unique_lock lock(this->queue_mutex);
-            this->condition.wait(
-                lock, [this] { return this->stop || !this->tasks.empty(); });
-            if (this->stop && this->tasks.empty())
+            std::unique_lock lock(queue_mutex);
+            condition.wait(lock, st, [&] { return !tasks.empty(); });
+            if (st.stop_requested() && tasks.empty()) {
               return;
-            task = std::move(this->tasks.front());
-            this->tasks.pop();
+            }
+            task = std::move(tasks.front());
+            tasks.pop();
           }
           task();
         }
@@ -127,40 +126,22 @@ public:
     std::future<return_type> res = task->get_future();
     {
       std::unique_lock lock(queue_mutex);
-
-      // don't allow enqueueing after stopping the pool
-      if (stop)
-        throw std::runtime_error("enqueue on stopped ThreadPool");
-
       tasks.emplace([task]() mutable { (*task)(); });
     }
     condition.notify_one();
     return res;
   }
 
-  /*!
-   * @brief The destructor joins all threads
-   */
-  ~ThreadPool() {
-    {
-      std::unique_lock lock(queue_mutex);
-      stop = true;
-    }
-    condition.notify_all();
-    for (std::thread& worker : workers)
-      worker.join();
-  }
-
 private:
-  // need to keep track of threads so we can join them
-  std::vector<std::thread> workers;
-  // the task queue
-  std::queue<std::function<void()>> tasks;
-
   // synchronization
   std::mutex queue_mutex;
-  std::condition_variable condition;
-  bool stop;
+  std::condition_variable_any condition;
+
+  // task queue
+  std::queue<std::function<void()>> tasks;
+
+  // worker threads
+  std::vector<std::jthread> workers;
 };
 
 TEST_CASE("Wavefront Parallelism", "DiGraph") {
@@ -204,12 +185,13 @@ TEST_CASE("Wavefront Parallelism", "DiGraph") {
     }
   }
 
-  // Run
+  // Get number of threads
   auto num_thread = std::thread::hardware_concurrency();
   if (num_thread == 0) {
     num_thread = 2;
   }
 
+  // Run
   auto counter = ConcurrentCounter();
   {
     auto pool = ThreadPool(num_thread);
@@ -237,13 +219,18 @@ TEST_CASE("Wavefront Parallelism", "DiGraph") {
         };
     xgraph::algorithm::TopologicalSort(*taskflow, visitor);
   }
+
+  // Release latch
   for (const auto& node : taskflow->Nodes()) {
     node->Data().Latch() = nullptr;
   }
 
+  // Check status
   for (const auto& edge : taskflow->Edges()) {
     REQUIRE(edge->Data().Status() == DependencyStatus::DONE);
   }
+
+  // Check parallelism
   if (num_thread > 2) {
     REQUIRE(counter.MaxActive() == 3);
   } else {
