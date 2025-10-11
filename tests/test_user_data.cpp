@@ -125,7 +125,7 @@ public:
 
     std::future<return_type> res = task->get_future();
     {
-      std::unique_lock lock(queue_mutex);
+      std::lock_guard lock(queue_mutex);
       tasks.emplace([task]() mutable { (*task)(); });
     }
     condition.notify_one();
